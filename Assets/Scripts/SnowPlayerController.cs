@@ -24,6 +24,10 @@ public class SnowPlayerController : MonoBehaviour
     private bool _isJumping=false;
     
     private RaycastHit _hitInfo;
+    
+    [Header("Visualizer")]
+    [SerializeField] private LineRenderer velocityLineRenderer;
+        
     # endregion
     
     # region InputHandlers
@@ -124,6 +128,15 @@ public class SnowPlayerController : MonoBehaviour
         //move the final vector
         
         _controller.Move(playerVelocity*Time.deltaTime);
+        UpdateVisualizer();
+        
+        
+    }
+
+    float CalAccleration( )
+    {
+        float accleration = playerVelocity.magnitude;
+        return accleration;
     }
 
     void AlignWithGround()
@@ -153,6 +166,11 @@ public class SnowPlayerController : MonoBehaviour
         Gizmos.DrawRay(_hitInfo.point, _hitInfo.normal * raycastDistance);
         Gizmos.color = Color.yellow;
         Gizmos.DrawRay(transform.position, transform.forward * raycastDistance);
+    }
+
+    private void UpdateVisualizer()
+    {
+        velocityLineRenderer.SetPosition(1, playerVelocity);
     }
 
     # region Timers

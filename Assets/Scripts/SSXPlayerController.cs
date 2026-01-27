@@ -10,7 +10,7 @@ public class SSXPlayerController : MonoBehaviour
     
     [Header("Movement Settings")]
     [SerializeField] private float _minSpeed = 5f;
-    [SerializeField] private float _maxSpeed = 45f,_downhillAccel = 25f,_friction = 8f;
+    [SerializeField] private float _maxSpeed = 45f,_downhillAccel = 25f,_friction = 1f;
     [SerializeField] float maxRideableSlope = 55f;
     [SerializeField] float minSpeedSlopeLimit = 10f;
     
@@ -108,7 +108,7 @@ public class SSXPlayerController : MonoBehaviour
     private void HandleJump()
     {
         if (!_inputJump || !(Time.time - _lastGroundedTime <= jumpGraceTime)) return;
-        _controller.Move(Vector3.up * 0.05f);
+        //_controller.Move(Vector3.up * 0.05f);
         _verticalVelocity = jumpForce + Mathf.Clamp(_speed * 0.05f, 0f, 4f);
 
         // Force airborne state
@@ -117,7 +117,7 @@ public class SSXPlayerController : MonoBehaviour
         _isGrounded = false;
         _lastGroundedTime = -999f;
         _jumpedThisFrame = true;
-        _suppressHorizontalThisFrame = true;
+       // _suppressHorizontalThisFrame = true;
     }
 
     void GroundCheck()
@@ -201,7 +201,7 @@ public class SSXPlayerController : MonoBehaviour
             
             _forwardDir = Vector3.ProjectOnPlane(-_forwardDir, _groundNormal).normalized;
             
-            _speed = 0.5f;
+            _speed = 4f;
         }
         if (slopeAngle <= minSpeedSlopeLimit)
         {

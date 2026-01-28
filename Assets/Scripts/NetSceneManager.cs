@@ -1,13 +1,16 @@
 using PurrNet;
 using UnityEngine;
 
-public class NetSceneManager : NetworkBehaviour
+namespace Scripts
 {
-    [PurrScene] public string _sceneName;
-    
-    [ContextMenu("ChangeScene")]
-    private void changeScene()
+    public class NetSceneManager : NetworkBehaviour
     {
-        networkManager.sceneModule.LoadSceneAsync(_sceneName);
+        [PurrScene] public string _sceneName;
+
+        [ContextMenu("ChangeScene")]
+        private void changeScene()
+        {
+            networkManager.sceneModule.LoadSceneAsync(_sceneName);
+        }
     }
 }

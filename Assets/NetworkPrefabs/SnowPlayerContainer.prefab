@@ -28,8 +28,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6919109020890098}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0049468037, y: -0.61184484, z: 0.0038266191, w: 0.7909531}
-  m_LocalPosition: {x: 7.7434344, y: 0.10002508, z: -2.01009}
+  m_LocalRotation: {x: 0.008733515, y: 0.14728612, z: -0.0013005605, w: 0.9890545}
+  m_LocalPosition: {x: -2.3682575, y: 0.1437115, z: -7.7775464}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -887,16 +887,17 @@ MonoBehaviour:
   cameraTransform: {fileID: 8396144339544222749}
   _minSpeed: 6
   _maxSpeed: 50
-  _downhillAccel: 28
+  _downhillAccel: 30
   _friction: 3
   maxRideableSlope: 55
   minSpeedSlopeLimit: 10
   _turnRate: 120
   _airTurnRate: 30
   _speedTurnScale: 0.015
+  _downhillBias: 0.05
   _gravity: -25
   _airGravityScale: 0.6
-  jumpForce: 10
+  jumpForce: 5
   jumpGraceTime: 0.15
   _groundCheckDistance: 2
   _landingBoost: 2
@@ -999,8 +1000,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6263295654538246304}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0049468037, y: -0.61184484, z: 0.0038266194, w: 0.7909531}
-  m_LocalPosition: {x: 7.7434344, y: 0.10002508, z: -2.01009}
+  m_LocalRotation: {x: 0.008733531, y: 0.14728612, z: -0.0013005624, w: 0.9890545}
+  m_LocalPosition: {x: -2.3682575, y: 0.1437115, z: -7.7775464}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1083,7 +1084,7 @@ MonoBehaviour:
     SplineCurvature: 0.5
   RecenteringTarget: 2
   HorizontalAxis:
-    Value: -75.44798
+    Value: 16.935455
     Center: 0
     Range: {x: -180, y: 180}
     Wrap: 1
@@ -1093,7 +1094,7 @@ MonoBehaviour:
       Time: 2
     Restrictions: 0
   VerticalAxis:
-    Value: -9.9994135
+    Value: -9.004871
     Center: 17.5
     Range: {x: -10, y: 45}
     Wrap: 0

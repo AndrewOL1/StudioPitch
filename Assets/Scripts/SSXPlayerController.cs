@@ -18,6 +18,7 @@ public class SSXPlayerController : MonoBehaviour
     [SerializeField]private float _turnRate = 120f; // degrees per second
     [SerializeField]private float _airTurnRate = 35f;
     [SerializeField]private float _speedTurnScale = 0.015f; // higher = wider turns at speed
+    [SerializeField]private float _downhillBias = 15f;
 
 
     [Header("Gravity")]
@@ -40,7 +41,7 @@ public class SSXPlayerController : MonoBehaviour
     [Header("Smoothing")]
     [SerializeField]private float _inputSmoothTime = 0.1f;
 
-    [Header("Board")] [SerializeField] private GameObject board;
+    [Header("Editor")] [SerializeField] private GameObject board;
     
     [SerializeField]private RaycastHit _hitInfo;
     
@@ -152,6 +153,7 @@ public class SSXPlayerController : MonoBehaviour
     }
     void GroundMovement()
     {
+        // there needs to be a way to get off the slope without jumping
 // Project forward onto slope
         _forwardDir = Vector3.ProjectOnPlane(_forwardDir, _groundNormal).normalized;
 
@@ -167,11 +169,11 @@ public class SSXPlayerController : MonoBehaviour
 
         float steepness = Mathf.InverseLerp(30f, maxRideableSlope, slopeAngle);
 
-        _forwardDir = Vector3.Slerp(_forwardDir, downhill, steepness * 0.75f);
+        _forwardDir = Vector3.Slerp(_forwardDir, downhill, steepness * _downhillBias);
         
         board.transform.rotation = Quaternion.LookRotation(_forwardDir);
         
-// Slope-based acceleration
+//  acceleration
         float slopeFactor = Mathf.Sin(slopeAngle * Mathf.Deg2Rad);
         float downhillDot = Vector3.Dot(_forwardDir, downhill);
         float angleToDownhill = Vector3.Angle(_forwardDir, downhill);

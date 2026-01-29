@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9f61a386f406ecf4dad9a5adb0aebc60
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Documentation.md
+  uploadId: 841842

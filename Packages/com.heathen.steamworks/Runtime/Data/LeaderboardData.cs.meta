@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: c52e707a3dbaeaf48b2d278e1fe92bb9
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Runtime/Data/LeaderboardData.cs
+  uploadId: 841842

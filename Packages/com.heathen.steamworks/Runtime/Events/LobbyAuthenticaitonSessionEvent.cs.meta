@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: b02166f256a378744923a79f5fb7b906
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Runtime/Events/LobbyAuthenticaitonSessionEvent.cs
+  uploadId: 841842

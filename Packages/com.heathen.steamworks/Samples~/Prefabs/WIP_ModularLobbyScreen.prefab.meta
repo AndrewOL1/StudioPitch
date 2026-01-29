@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4592d1dca9769a04c9e04b5cbf3b8737
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Samples~/Prefabs/WIP_ModularLobbyScreen.prefab
+  uploadId: 841842

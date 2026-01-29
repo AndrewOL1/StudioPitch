@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: a42ce6498e9c7c6438121d554be79793
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Samples~/Examples/RemoteStorageLogic.cs
+  uploadId: 841842

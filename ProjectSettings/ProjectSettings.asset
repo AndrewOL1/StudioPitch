@@ -818,7 +818,8 @@ PlayerSettings:
   webGLCloseOnQuit: 0
   webWasm2023: 0
   scriptingDefineSymbols:
-    Standalone: STEAMWORKS_NET
+    Server: APP480
+    Standalone: STEAMWORKS_NET;APP480
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

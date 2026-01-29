@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ee33024d491226d46aca4780e0be4546
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {fileID: 2800000, guid: c1b61f6c2da9b4a46b4c377f5631f7f5, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Runtime/SteamLobbyMemberData.cs
+  uploadId: 841842

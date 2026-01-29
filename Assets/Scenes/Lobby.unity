@@ -1498,7 +1498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 018749c98c25d47418932e090d8f8fbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentProvider: {fileID: 1079702026}
+  currentProvider: {fileID: 1079702028}
   createRoomArgs:
     maxPlayers: 5
     roomProperties:

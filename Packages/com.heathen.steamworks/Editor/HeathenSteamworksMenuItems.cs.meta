@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 2de39d28df13c674e8c7dbc330870e84
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Editor/HeathenSteamworksMenuItems.cs
+  uploadId: 841842

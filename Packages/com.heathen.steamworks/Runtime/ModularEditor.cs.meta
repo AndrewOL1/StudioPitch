@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: aeb953508f93e2845952dc3e51ff6f77
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Runtime/ModularEditor.cs
+  uploadId: 841842

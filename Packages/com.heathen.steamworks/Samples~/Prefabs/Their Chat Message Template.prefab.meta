@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d5533fc5ad455ec49aedf30677eba13c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Samples~/Prefabs/Their Chat Message
+    Template.prefab
+  uploadId: 841842

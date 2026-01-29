@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 38a69509a96a37a42bc25e5e8be524dd
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Runtime/Data/UserData.cs
+  uploadId: 841842

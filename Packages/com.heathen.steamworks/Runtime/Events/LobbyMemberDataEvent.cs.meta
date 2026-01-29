@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: e9d225b5e9d143641923e3a7f5eb3671
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Runtime/Events/LobbyMemberDataEvent.cs
+  uploadId: 841842

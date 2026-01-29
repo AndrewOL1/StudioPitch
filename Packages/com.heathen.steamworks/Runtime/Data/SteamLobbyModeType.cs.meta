@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: e7e3370faa9131b4081701f9d79bada4
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Runtime/Data/SteamLobbyModeType.cs
+  uploadId: 841842

@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: e527ce7af02f06b48803d3c7db531fbd
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Runtime/Data/InputControllerStateData.cs
+  uploadId: 841842

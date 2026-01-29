@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a24a45b271e6be0429f39c91c2a6fe74, type: 3}
+  m_Name: SteamToolsSettings
+  m_EditorClassIdentifier: 
+  activeAppIndex: -1
+  mainAppSettings:
+    editorName: Main
+    applicationId: 480
+    leaderboards:
+    - create: 0
+      name: Feet Traveled
+      type: 1
+      sort: 1
+    stats:
+    - id: AverageSpeed
+    - id: FeetTraveled
+    - id: MaxFeetTraveled
+    - id: NumGames
+    - id: NumLosses
+    - id: NumWins
+    - id: Unused2
+    achievements:
+    - id: ACH_TRAVEL_FAR_ACCUM
+    - id: ACH_TRAVEL_FAR_SINGLE
+    - id: ACH_WIN_100_GAMES
+    - id: ACH_WIN_ONE_GAME
+    - id: NEW_ACHIEVEMENT_0_4
+    actionSets:
+    - menu_controls
+    - ship_controls
+    actionSetLayers:
+    - thrust_action_layer
+    actions:
+    - type: 0
+      name: analog_controls
+    - type: 1
+      name: backward_thrust
+    - type: 1
+      name: fire_lasers
+    - type: 1
+      name: forward_thrust
+    - type: 1
+      name: menu_cancel
+    - type: 1
+      name: menu_down
+    - type: 1
+      name: menu_left
+    - type: 1
+      name: menu_right
+    - type: 1
+      name: menu_select
+    - type: 1
+      name: menu_up
+    - type: 1
+      name: pause_menu
+    - type: 1
+      name: turn_left
+    - type: 1
+      name: turn_right
+  demoAppSettings:
+    editorName: 
+    applicationId: 0
+    leaderboards: []
+    stats: []
+    achievements: []
+    actionSets: []
+    actionSetLayers: []
+    actions: []
+  dlcNames: []
+  dlc: 
+  defaultServerSettings:
+    autoInitialize: 0
+    autoLogon: 0
+    ip: 0
+    gamePort: 0
+    queryPort: 0
+    spectatorPort: 0
+    serverVersion: 
+    usingGameServerAuthApi: 0
+    enableHeartbeats: 0
+    supportSpectators: 0
+    spectatorServerName: 
+    anonymousServerLogin: 0
+    gameServerToken: 
+    isPasswordProtected: 0
+    serverName: 
+    gameDescription: 
+    gameDirectory: 
+    isDedicated: 0
+    maxPlayerCount: 0
+    botPlayerCount: 0
+    mapName: 
+    gameData: 
+    rulePairs: []
+  inventorySettings:
+    items: []
+  playtestSettings: []
+  appIds: 
+  leaderboards: []
+  stats: []
+  achievements: []
+  inputSets: []
+  inputLayers: []
+  inputActions: []
+  items: []
+  isDirty: 1
+  references:
+    version: 2
+    RefIds: []

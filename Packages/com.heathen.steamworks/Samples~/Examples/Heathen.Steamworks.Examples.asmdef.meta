@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5580c9bef57d1b945beaa6d6be5e7ded
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Samples~/Examples/Heathen.Steamworks.Examples.asmdef
+  uploadId: 841842

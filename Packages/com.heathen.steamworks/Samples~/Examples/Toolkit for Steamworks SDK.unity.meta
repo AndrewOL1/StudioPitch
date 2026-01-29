@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 35c38f1cd7227e349b44eabfa1157676
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Samples~/Examples/Toolkit for Steamworks
+    SDK.unity
+  uploadId: 841842

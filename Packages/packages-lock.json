@@ -7,6 +7,12 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.heathen.steamworks": {
+      "version": "file:com.heathen.steamworks",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.rlabrecque.steamworks.net": {
       "version": "https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net#2024.8.0",
       "depth": 0,

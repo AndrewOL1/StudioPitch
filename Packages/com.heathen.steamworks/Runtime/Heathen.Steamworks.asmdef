@@ -1,0 +1,56 @@
+{
+    "name": "Heathen.Steamworks",
+    "rootNamespace": "Heathen.SteamworksIntegration",
+    "references": [
+        "Unity.Mathematics",
+        "com.rlabrecque.steamworks.net",
+        "Discord.Sdk",
+        "Heathen.DiscordSocial",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem",
+        "Unity.Localization"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "LinuxStandalone64",
+        "macOSStandalone",
+        "WindowsStandalone32",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "!DISABLESTEAMWORKS"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.rlabrecque.steamworks.net",
+            "expression": "[0,2025]",
+            "define": "STEAM_LEGACY"
+        },
+        {
+            "name": "com.rlabrecque.steamworks.net",
+            "expression": "[2025.161,2025.161.9999]",
+            "define": "STEAM_161"
+        },
+        {
+            "name": "com.rlabrecque.steamworks.net",
+            "expression": "[2025.162,2025.162.9999]",
+            "define": "STEAM_162"
+        },
+        {
+            "name": "com.unity.localization",
+            "expression": "1.5.7",
+            "define": "LOCALIZED"
+        },
+        {
+            "name": "com.heathen.discordsocial",
+            "expression": "",
+            "define": "DISCORD"
+        }
+    ],
+    "noEngineReferences": false
+}

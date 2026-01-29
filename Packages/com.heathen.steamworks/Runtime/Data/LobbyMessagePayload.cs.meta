@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 61b2d5e1763bee94c8b19d08a7dddc96
+AssetOrigin:
+  serializedVersion: 1
+  productId: 331101
+  packageName: Toolkit for Steamworks 2026
+  packageVersion: 5.0.5
+  assetPath: Packages/com.heathen.steamworks/Runtime/Data/LobbyMessagePayload.cs
+  uploadId: 841842

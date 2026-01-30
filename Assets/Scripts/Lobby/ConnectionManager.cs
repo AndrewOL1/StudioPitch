@@ -1,9 +1,11 @@
 using Heathen.SteamworksIntegration;
+using Heathen.SteamworksIntegration.API;
 using PurrNet;
 using PurrNet.Steam;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Button = UnityEngine.UI.Button;
 
 namespace SteamExample {
     /// <summary>
@@ -19,16 +21,18 @@ namespace SteamExample {
     /// </remarks>
     public sealed class ConnectionManager : NetworkIdentity {
         // Be sure to drag and drop each element if you're copying this directly into your project.
-        [SerializeField] private SteamSettings steamSettings;
         [SerializeField] private Button hostButton;
         [SerializeField] private Button clientButton;
         [SerializeField] private TMP_Text hostTextField;
         [SerializeField] private TMP_InputField clientInputField;
         
+        private string _hostAddress;
+        
         private void Awake() {
             InstanceHandler.RegisterInstance(this);
             DontDestroyOnLoad(this);
             InitializeSteam();
+            Overlay.Client.OnGameLobbyJoinRequested.AddListener(HandleLobbyJoinRequest);
         }
 
         private void OnEnable() {
@@ -54,7 +58,7 @@ namespace SteamExample {
         /// making a steam game! So again, this is just an example, feel free to refactor to fit your needs.
         /// </remarks>
         public void InitializeSteam() {
-            steamSettings.Initialize();
+            SteamTools.Game.Initialize();
         }
         
         /// <summary>
@@ -78,7 +82,6 @@ namespace SteamExample {
             steamTransport.peerToPeer = true;
             steamTransport.dedicatedServer = false;
             steamTransport.address = user.id.ToString();
-            
             NetworkManager.main.StartHost();
         }
 
@@ -160,5 +163,24 @@ namespace SteamExample {
             clientButton?.onClick.RemoveListener(HandleHostClicked);
             clientButton?.onClick.RemoveListener(HandleClientClicked);
         }
+
+        public void InviteToLobby(UserData user, LobbyData lobby)
+        {
+            //from user
+            user.InviteToLobby(lobby);
+            //or, from the lobby
+            lobby.InviteUserToLobby(user);
+        }
+        private void HandleLobbyJoinRequest(LobbyData Lobby, UserData User)
+        {
+            // Lobby is the lobby you were invited to
+            // User is the user who invited you
+        }
+
+        public string GetHostAddress()
+        {
+            return UserData.Get().HexId;
+        }
+        
     }
 }

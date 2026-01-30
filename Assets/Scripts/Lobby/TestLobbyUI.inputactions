@@ -1,0 +1,46 @@
+{
+    "version": 1,
+    "name": "TestLobbyUI",
+    "maps": [
+        {
+            "name": "UI",
+            "id": "e0ceb17e-2422-4f8c-b671-819b2b3bf517",
+            "actions": [
+                {
+                    "name": "ToggleOn",
+                    "type": "Button",
+                    "id": "88fb0be6-a26b-4a9a-8b6a-5adfe945a1e9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "952197aa-3ec1-4848-a4da-5654837ff7ab",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d32b65d9-8856-4847-a388-efdc2fc1cefb",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

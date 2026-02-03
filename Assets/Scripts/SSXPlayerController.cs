@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -68,6 +69,8 @@ public class SSXPlayerController : MonoBehaviour
     
     float _lastLandingTime;
     float _landingCooldown = 0.1f;
+
+    private bool _isPaused;
     
     # endregion
     
@@ -93,6 +96,7 @@ public class SSXPlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(_isPaused)return;
         HandleInput();
         GroundCheck();
         HandleJump();
@@ -280,6 +284,18 @@ public class SSXPlayerController : MonoBehaviour
         
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + velocity * 2f);
+    }
+
+    public void StopMovement()
+    {
+        _speed = 0;
+        _isPaused = true;
+        StartCoroutine(Pause());
+    }
+    IEnumerator Pause()
+    {
+        yield return new WaitForSeconds(0.1f);
+        _isPaused = false;
     }
     
 }

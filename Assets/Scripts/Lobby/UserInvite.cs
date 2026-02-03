@@ -19,7 +19,7 @@ namespace Lobby
         // Update is called once per frame
         public void OnClick()
         {
-            _myFriendManager.InviteFriend(myUser.text);
+            //_myFriendManager.InviteFriend(myUser.text);
         }
     }
 }

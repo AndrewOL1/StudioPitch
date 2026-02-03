@@ -7,37 +7,47 @@ namespace Lobby
 {
     public class FriendManager : MonoBehaviour
     {
-        private UserData[] myFriends;
+        [SerializeField] private GameObject friendWidget;
+        [SerializeField] private Transform content;
 
-        void Awake()
+        private void Start()
         {
-            InstanceHandler.RegisterInstance(this);
-            DontDestroyOnLoad(this);
+            if (SteamTools.Interface.IsReady)
+            {
+                Interface_OnReady();
+            }
+            else
+            {
+                // Not ready yet, listen for On Ready
+                SteamTools.Interface.OnReady += Interface_OnReady;
+            }
         }
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+
+        private void Interface_OnReady()
         {
+            UserData[] myFriends = UserData.MyFriends;
             
-        }
-        void OnDestroy() {
-            InstanceHandler.UnregisterInstance<FriendManager>();
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            myFriends = UserData.MyFriends;
-        }
-
-        public void InviteFriend(string friendName)
-        {
+            //You can now loop through that list and read the profile information
             foreach(var friend in myFriends)
             {
-                //Get the name and whatever else you might like to do with it
-                if (friend.Name == friendName)
+                //Init friendslist
+                //if (friend.State == EPersonaState.k_EPersonaStateOffline) return;
+                GameObject newFriend = Instantiate(friendWidget, content);
+                InviteFriend inviteFriend = newFriend.GetComponent<InviteFriend>();
+                friend.LoadAvatar((Texture2D avatarTexture) => 
                 {
-                    friend.InviteToGame(InstanceHandler.GetInstance<ConnectionManager>().GetHostAddress());
-                }
+                    if (avatarTexture != null)
+                    {
+                        // 2. Assign the texture to your UI once it arrives
+                        inviteFriend.avatar.texture = avatarTexture;
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to load avatar.");
+                    }
+                });
+                inviteFriend.userName.text = friend.Name;
+                inviteFriend.userData = friend;
             }
         }
     }

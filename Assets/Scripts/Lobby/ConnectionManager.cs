@@ -32,7 +32,7 @@ namespace SteamExample {
             InstanceHandler.RegisterInstance(this);
             DontDestroyOnLoad(this);
             InitializeSteam();
-            Overlay.Client.OnGameLobbyJoinRequested.AddListener(HandleLobbyJoinRequest);
+            Overlay.Client.OnGameRichPresenceJoinRequested.AddListener(HandleJoinRequest);
         }
 
         private void OnEnable() {
@@ -171,15 +171,12 @@ namespace SteamExample {
             //or, from the lobby
             lobby.InviteUserToLobby(user);
         }
-        private void HandleLobbyJoinRequest(LobbyData Lobby, UserData User)
+        private void HandleJoinRequest(UserData whoInvitedYou, string connectionStringTheyPassed)
         {
             // Lobby is the lobby you were invited to
             // User is the user who invited you
-        }
-
-        public string GetHostAddress()
-        {
-            return UserData.Get().HexId;
+            Debug.Log("Joining connection to Steam: "+ whoInvitedYou.Name +", "+connectionStringTheyPassed);
+            StartClient(connectionStringTheyPassed);
         }
         
     }

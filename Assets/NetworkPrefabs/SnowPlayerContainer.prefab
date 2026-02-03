@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6919109020890098}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.008733515, y: 0.14728612, z: -0.0013005605, w: 0.9890545}
+  m_LocalRotation: {x: 0.008733565, y: 0.14728612, z: -0.0013005668, w: 0.9890545}
   m_LocalPosition: {x: -2.3682575, y: 0.1437115, z: -7.7775464}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -180,6 +180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3748565562366308516}
   - component: {fileID: 6401222345998017062}
+  - component: {fileID: 8146089776709805441}
   m_Layer: 0
   m_Name: SnowPlayerContainer
   m_TagString: Untagged
@@ -215,6 +216,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5681fe548eb84304ea28a286062791f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+--- !u!114 &8146089776709805441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21721660144949154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1591323a8a32746419918be3d0cb7a32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _isSetup: 0
@@ -617,6 +639,7 @@ GameObject:
   - component: {fileID: 1826372689367762454}
   - component: {fileID: 6213604797256041897}
   - component: {fileID: 6046922464966809412}
+  - component: {fileID: 6442896558412638576}
   m_Layer: 0
   m_Name: SnowPlayer (2)
   m_TagString: Player
@@ -971,6 +994,28 @@ MonoBehaviour:
   _toDeactivate: []
   _toEnable: []
   _toDisable: []
+--- !u!114 &6442896558412638576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4891752042514912073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53ff64e71a0a95a43ae4c2d304ba7738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  playerMovement: {fileID: 1826372689367762454}
 --- !u!1 &6263295654538246304
 GameObject:
   m_ObjectHideFlags: 0
@@ -1000,7 +1045,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6263295654538246304}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.008733531, y: 0.14728612, z: -0.0013005624, w: 0.9890545}
+  m_LocalRotation: {x: 0.008733839, y: 0.14728612, z: -0.0013006008, w: 0.9890545}
   m_LocalPosition: {x: -2.3682575, y: 0.1437115, z: -7.7775464}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

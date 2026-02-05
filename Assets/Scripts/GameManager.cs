@@ -4,6 +4,7 @@ using PurrNet;
 using PurrNet.Packing;
 using Scripts;
 using UnityEngine.Serialization;
+using TMPro;
 
 public class GameManager : NetworkBehaviour
 {
@@ -13,13 +14,15 @@ public class GameManager : NetworkBehaviour
     [SerializeField]private SyncDictionary<PackedULong,bool> playersReady = new(true);
     NetSceneManager _netSceneManager;
     [SerializeField]Vector3 spawnPosition;
-    [SerializeField] private SyncDictionary<int, float> playerProgressDict = new(true);
-
+    [SerializeField] private SyncDictionary<PackedULong, float> playerProgressDict = new(true);
+    [SerializeField] private TMP_Text positionUIText;
+    [SerializeField] private int positionTest;
     #endregion
     private void Awake()
     {
         InstanceHandler.RegisterInstance(this);
         DontDestroyOnLoad(this);
+        positionTest = (int)playersReady.Count / 2;
     }
 
     private void OnDestroy() 
@@ -37,7 +40,7 @@ public class GameManager : NetworkBehaviour
     {
         //Subscribing to changes made to the dictionary
         playersReady.onChanged += OnPlayersReadyChanged;
-        playerProgressDict.onChanged += OnDictionaryChanged;
+        //playerProgressDict.onChanged += OnPlayerProgressDictChanged;
     }
 
     private void OnPlayersReadyChanged(SyncDictionaryChange<PackedULong, bool> change)
@@ -71,7 +74,11 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    public void FixedUpdate()
+    {
+        UpdateRaceUI();
+    }
+
     private void UpdateRaceUI()
     {
         // call once every interval
@@ -79,12 +86,7 @@ public class GameManager : NetworkBehaviour
         // sort in order of progress
         // store the vars in a sync dictionary <Name,position>
 
-        foreach (var player in PlayerTeleport.allPlayers)
-        {
-            
-            float currentPlayerProg = player.Value.GetComponent<SsxPlayerController>().UpdateProgress();
-            playerProgressDict[1/*Player reference*/] = currentPlayerProg;
-        }
+        positionUIText.text = positionTest + "/" + playersReady.Count;
     }
 
     public void StartRace()
@@ -123,13 +125,40 @@ public class GameManager : NetworkBehaviour
 
     private void ChangeMyDictionary()
     {
-        //This will change or add a value to the dictionary
+        /*//This will change or add a value to the dictionary
         playerProgressDict[123] = 0.69f;
 
         //This will remove the value from the dictionary
         playerProgressDict.Remove(123);
 
         //This will mark the key as dirty
-        playerProgressDict.SetDirty(123);
+        playerProgressDict.SetDirty(123);*/
+    }
+
+    [ServerRpc]
+    private void OnPlayerProgressDictChanged(SyncDictionaryChange<PackedULong, float> change)
+    {
+        
+        foreach (var player in PlayerTeleport.allPlayers)
+        {
+            float currentPlayerProg = player.Value.GetComponent<SsxPlayerController>().UpdateProgress();
+            playerProgressDict[player.Value.PlayerULong()] = currentPlayerProg;
+
+            foreach (var otherPlayer in PlayerTeleport.allPlayers)
+            {
+                if (currentPlayerProg < otherPlayer.Value.GetComponent<SsxPlayerController>().UpdateProgress() && positionTest != playersReady.Count)
+                {
+                    positionTest++;
+                }
+
+                if (currentPlayerProg > otherPlayer.Value.GetComponent<SsxPlayerController>().UpdateProgress() && positionTest != playersReady.Count)
+                {
+                    positionTest--;
+                }
+            }
+
+        }
+
+        
     }
 }

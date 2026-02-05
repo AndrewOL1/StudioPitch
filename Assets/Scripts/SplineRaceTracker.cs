@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
+using PurrNet;
 
 public class SplineRaceTracker : MonoBehaviour
 {
@@ -100,5 +101,17 @@ public class SplineRaceTracker : MonoBehaviour
         Vector3 ab = b - a;
         float t = Vector3.Dot(point - a, ab) / Vector3.Dot(ab, ab);
         return a + Mathf.Clamp01(t) * ab;
+    }
+
+    private void Awake()
+    {
+        //We register the SSXPlayerController instance
+        InstanceHandler.RegisterInstance(this);
+    }
+
+    private void OnDestroy()
+    {
+        //Upon being destroyed, we unregister the game manager instance
+        InstanceHandler.UnregisterInstance<SplineRaceTracker>();
     }
 }

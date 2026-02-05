@@ -17,6 +17,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private SyncDictionary<PlayerID, float> playerProgressDict = new(true);
     [SerializeField] private TMP_Text positionUIText;
     [SerializeField] private int positionTest;
+    [SerializeField] private List<float> sortedPositiions;
     #endregion
     private void Awake()
     {
@@ -34,13 +35,14 @@ public class GameManager : NetworkBehaviour
     private void Start()
     {
         _netSceneManager=InstanceHandler.GetInstance<NetSceneManager>();
+        
     }
     
     protected override void OnSpawned()
     {
         //Subscribing to changes made to the dictionary
         playersReady.onChanged += OnPlayersReadyChanged;
-        //playerProgressDict.onChanged += OnPlayerProgressDictChanged;
+        playerProgressDict.onChanged += OnPlayerProgressDictChanged;
     }
 
     private void OnPlayersReadyChanged(SyncDictionaryChange<PlayerID, bool> change)
@@ -118,25 +120,6 @@ public class GameManager : NetworkBehaviour
         //start next race
     }
 
-    private void OnDictionaryChanged(SyncDictionaryChange<int, float> change)
-    {
-        //This is called for everyone when the dictionary changes.
-        //It will log out the Key, Value and operation
-        Debug.Log($"Dictionary updated: {change}");
-    }
-
-    private void ChangeMyDictionary()
-    {
-        /*//This will change or add a value to the dictionary
-        playerProgressDict[123] = 0.69f;
-
-        //This will remove the value from the dictionary
-        playerProgressDict.Remove(123);
-
-        //This will mark the key as dirty
-        playerProgressDict.SetDirty(123);*/
-    }
-
     [ServerRpc]
     private void OnPlayerProgressDictChanged(SyncDictionaryChange<PlayerID, float> change)
     {
@@ -146,9 +129,16 @@ public class GameManager : NetworkBehaviour
             float currentPlayerProg = player.Value.GetComponent<SsxPlayerController>().UpdateProgress();
             playerProgressDict[player.Value.PlayerID()] = currentPlayerProg;
 
-
+            sortedPositiions.Add(currentPlayerProg);
         }
 
-        
+        sortedPositiions.Sort();
+        sortedPositiions.Reverse();
+
+
+
+
+
+        sortedPositiions.Clear();
     }
 }

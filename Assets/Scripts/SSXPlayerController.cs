@@ -1,3 +1,4 @@
+using PurrNet;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -81,10 +82,10 @@ public class SsxPlayerController : MonoBehaviour
     
     //testing
     private SplineRaceTracker _splineRaceTracker;
-    
-    # endregion
-    
-    # region InputHandlers
+
+    #endregion
+
+    #region InputHandlers
 
     public void ReadJump(InputAction.CallbackContext context)
     {
@@ -385,10 +386,25 @@ public class SsxPlayerController : MonoBehaviour
         _isPaused = false;
     }
 
-    private void UpdateProgress()
+    public float UpdateProgress() // call by game Manager
     {
         float progress,distance;
         (progress,distance)=_splineRaceTracker.GetPlayerProgress(transform.position);
+        InstanceHandler.GetInstance<SplineRaceTracker>();
+        return progress;
     }
-    
+
+    private void Awake()
+    {
+        //We register the SSXPlayerController instance
+        InstanceHandler.RegisterInstance(this);
+    }
+
+    private void OnDestroy()
+    {
+        //Upon being destroyed, we unregister the game manager instance
+        InstanceHandler.UnregisterInstance<GameManager>();
+    }
+
+
 }

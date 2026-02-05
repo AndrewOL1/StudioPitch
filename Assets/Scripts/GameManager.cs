@@ -13,6 +13,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField]private SyncDictionary<PackedULong,bool> playersReady = new(true);
     NetSceneManager _netSceneManager;
     [SerializeField]Vector3 spawnPosition;
+    [SerializeField] private SyncDictionary<int, float> playerProgressDict = new(true);
+
     #endregion
     private void Awake()
     {
@@ -35,6 +37,7 @@ public class GameManager : NetworkBehaviour
     {
         //Subscribing to changes made to the dictionary
         playersReady.onChanged += OnPlayersReadyChanged;
+        playerProgressDict.onChanged += OnDictionaryChanged;
     }
 
     private void OnPlayersReadyChanged(SyncDictionaryChange<PackedULong, bool> change)
@@ -68,12 +71,20 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    [ServerRpc]
     private void UpdateRaceUI()
     {
         // call once every interval
         // get players and for each call the update progress
         // sort in order of progress
         // store the vars in a sync dictionary <Name,position>
+
+        foreach (var player in PlayerTeleport.allPlayers)
+        {
+            
+            float currentPlayerProg = player.Value.GetComponent<SsxPlayerController>().UpdateProgress();
+            playerProgressDict[1/*Player reference*/] = currentPlayerProg;
+        }
     }
 
     public void StartRace()
@@ -101,5 +112,24 @@ public class GameManager : NetworkBehaviour
         //after set time
         //clear race data
         //start next race
+    }
+
+    private void OnDictionaryChanged(SyncDictionaryChange<int, float> change)
+    {
+        //This is called for everyone when the dictionary changes.
+        //It will log out the Key, Value and operation
+        Debug.Log($"Dictionary updated: {change}");
+    }
+
+    private void ChangeMyDictionary()
+    {
+        //This will change or add a value to the dictionary
+        playerProgressDict[123] = 0.69f;
+
+        //This will remove the value from the dictionary
+        playerProgressDict.Remove(123);
+
+        //This will mark the key as dirty
+        playerProgressDict.SetDirty(123);
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
 {
-    [SerializeField] SSXPlayerController playerMovement;
+    [SerializeField] SsxPlayerController playerMovement;
     public void Teleport(Vector3 destination)
     {
         ServerTeleport(destination);

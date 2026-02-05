@@ -10,7 +10,9 @@ namespace Scripts
         [PurrScene] public string _sceneName;
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float delay;
-
+        /// <summary>
+        /// Make This and instance then wait for all players to send a onLoadComplete
+        /// </summary>
         [ContextMenu("ChangeScene")]
         public void ChangeScene()
         {
@@ -46,18 +48,10 @@ namespace Scripts
                 player.Value.Teleport(spawnPoint.position);
             }
         }
-        public void RestAllPlayers() 
-        {
-            //allPlayers gives you a dictionary of all the players registered
-            foreach(var player in PlayerContainerReset.allPlayers) {
-                player.Value.Teleport();
-            }
-        }
 
         IEnumerator SetToSpawn(float time)
         {
             yield return new WaitForSeconds(time);
-            RestAllPlayers();
             TeleportAllPlayers();
         }
         

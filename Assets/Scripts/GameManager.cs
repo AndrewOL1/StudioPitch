@@ -144,7 +144,7 @@ public class GameManager : NetworkBehaviour
             float currentPlayerProg = player.Value.GetComponent<SsxPlayerController>().UpdateProgress();
             playerProgressDict[player.Value.PlayerULong()] = currentPlayerProg;
 
-            foreach (var otherPlayer in PlayerTeleport.allPlayers)
+            /*foreach (var otherPlayer in PlayerTeleport.allPlayers)
             {
                 if (currentPlayerProg < otherPlayer.Value.GetComponent<SsxPlayerController>().UpdateProgress() && positionTest != playersReady.Count)
                 {
@@ -155,7 +155,7 @@ public class GameManager : NetworkBehaviour
                 {
                     positionTest--;
                 }
-            }
+            }*/
 
         }
 

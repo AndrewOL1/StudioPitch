@@ -24,10 +24,6 @@ public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
     private void Start()
     {
         _gameManager = InstanceHandler.GetInstance<GameManager>();
-    }
-
-    private void Start()
-    {
         networkManager.sceneModule.onSceneLoaded += HandleSceneLoaded();
     }
 

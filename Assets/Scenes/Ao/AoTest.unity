@@ -171,12 +171,14 @@ MonoBehaviour:
   playerProgressDict:
     _ownerAuth: 1
     _serializedDict:
-      keys: 
+      keys: []
       values: []
       stringKeys: []
       stringValues: []
     _sendIntervalInSeconds: 0
     _useForceSend: 0
+  positionUIText: {fileID: 0}
+  positionTest: 0
 --- !u!4 &9197409
 Transform:
   m_ObjectHideFlags: 0

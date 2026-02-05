@@ -14,7 +14,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField]private SyncDictionary<PlayerID,bool> playersReady = new(true);
     NetSceneManager _netSceneManager;
     [SerializeField]Vector3 spawnPosition;
-    [SerializeField] private SyncDictionary<PackedULong, float> playerProgressDict = new(true);
+    [SerializeField] private SyncDictionary<PlayerID, float> playerProgressDict = new(true);
     [SerializeField] private TMP_Text positionUIText;
     [SerializeField] private int positionTest;
     #endregion
@@ -138,13 +138,13 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void OnPlayerProgressDictChanged(SyncDictionaryChange<PackedULong, float> change)
+    private void OnPlayerProgressDictChanged(SyncDictionaryChange<PlayerID, float> change)
     {
         
         foreach (var player in PlayerTeleport.allPlayers)
         {
             float currentPlayerProg = player.Value.GetComponent<SsxPlayerController>().UpdateProgress();
-            playerProgressDict[player.Value.PlayerULong()] = currentPlayerProg;
+            playerProgressDict[player.Value.PlayerID()] = currentPlayerProg;
 
 
         }

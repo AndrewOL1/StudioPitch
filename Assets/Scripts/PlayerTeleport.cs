@@ -8,6 +8,7 @@ public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
     [SerializeField] SsxPlayerController playerMovement;
     
     private GameManager _gameManager;
+    bool _lobbySceneLoad = false;
     public void Teleport(Vector3 destination)
     {
         ServerTeleport(destination);
@@ -23,17 +24,34 @@ public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
     private void Awake()
     {
         _gameManager = InstanceHandler.GetInstance<GameManager>();
+    }
+
+    private void Start()
+    {
+        networkManager.sceneModule.onSceneLoaded += HandleSceneLoaded();
+    }
+
+    public void NewScene()
+    {
         networkManager.sceneModule.onSceneLoaded += HandleSceneLoaded();
     }
 
     private OnSceneActionEvent HandleSceneLoaded()
     {
-        _gameManager.SceneLoaded(localPlayerForced.id,true);
-        return null;
+        if (!_lobbySceneLoad)
+        {
+            _lobbySceneLoad = true;
+            return null;
+        }
+        else
+        {
+            _gameManager.SceneLoaded((PlayerID)this.GetComponent<NetworkIdentity>().owner,true);
+            return null;
+        }
     }
 
-    public PackedULong PlayerULong()
+    public PlayerID PlayerID()
     {
-        return localPlayerForced.id;
+        return (PlayerID)this.GetComponent<NetworkIdentity>().owner;
     }
 }

@@ -136,7 +136,7 @@ public class SsxPlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         //testing 
-        UpdateProgress();
+        //UpdateProgress();
     }
 
     private void HandleJump()

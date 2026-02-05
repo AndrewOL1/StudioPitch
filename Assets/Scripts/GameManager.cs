@@ -10,7 +10,7 @@ public class GameManager : NetworkBehaviour
     # region variables
     [SerializeField]private float raceUpdateInterval = 0.5f;
     
-    [SerializeField]private SyncDictionary<PackedULong,bool> playersReady = new(true);
+    [SerializeField]private SyncDictionary<PlayerID,bool> playersReady = new(true);
     NetSceneManager _netSceneManager;
     [SerializeField]Vector3 spawnPosition;
     [SerializeField] private SyncDictionary<int, float> playerProgressDict = new(true);
@@ -40,13 +40,13 @@ public class GameManager : NetworkBehaviour
         playerProgressDict.onChanged += OnDictionaryChanged;
     }
 
-    private void OnPlayersReadyChanged(SyncDictionaryChange<PackedULong, bool> change)
+    private void OnPlayersReadyChanged(SyncDictionaryChange<PlayerID, bool> change)
     {
         Debug.Log($"PlayersReady updated: {change}");
         CheckReady();
     }
     [ServerRpc]
-    public void SceneLoaded(PackedULong key,bool value)
+    public void SceneLoaded(PlayerID key,bool value)
     {
         playersReady[key] = value;
     }
@@ -67,7 +67,9 @@ public class GameManager : NetworkBehaviour
     {
         foreach(var player in PlayerTeleport.allPlayers)
         {
-            playersReady[player.Value.PlayerULong()] = false;
+            Debug.Log(player.Value.PlayerID());
+            if (player.Value.PlayerID()!=null)
+                playersReady[player.Value.PlayerID()] = false;
         }
     }
 

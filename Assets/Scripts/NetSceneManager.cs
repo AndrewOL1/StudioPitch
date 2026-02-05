@@ -33,6 +33,9 @@ namespace Scripts
         {
             _gameManager.InitPlayersReady();
             networkManager.sceneModule.LoadSceneAsync(_sceneName);
+            foreach(var player in PlayerTeleport.allPlayers) {
+                player.Value.NewScene();
+            }
         }
 
         private void Start()

@@ -21,7 +21,7 @@ public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
         Debug.Log(transform.position);
     }
 
-    private void Awake()
+    private void Start()
     {
         _gameManager = InstanceHandler.GetInstance<GameManager>();
     }

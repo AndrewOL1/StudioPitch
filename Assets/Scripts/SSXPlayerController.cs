@@ -397,13 +397,13 @@ public class SsxPlayerController : MonoBehaviour
     private void Awake()
     {
         //We register the SSXPlayerController instance
-        InstanceHandler.RegisterInstance(this);
+        //InstanceHandler.RegisterInstance(this);
     }
 
     private void OnDestroy()
     {
         //Upon being destroyed, we unregister the game manager instance
-        InstanceHandler.UnregisterInstance<GameManager>();
+        //InstanceHandler.UnregisterInstance<GameManager>();
     }
 
 

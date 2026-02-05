@@ -10,18 +10,34 @@ namespace Scripts
         [PurrScene] public string _sceneName;
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float delay;
+        GameManager _gameManager;
         /// <summary>
         /// Make This and instance then wait for all players to send a onLoadComplete
         /// </summary>
+        
+        private void Awake() 
+        {
+            //We register the GameManager instance
+            InstanceHandler.RegisterInstance(this);
+            DontDestroyOnLoad(gameObject);
+        }
+        
+        private void OnDestroy() 
+        {
+            //Upon being destroyed, we unregister the game manager instance
+            InstanceHandler.UnregisterInstance<NetSceneManager>();
+        }
+        
         [ContextMenu("ChangeScene")]
         public void ChangeScene()
         {
+            _gameManager.InitPlayersReady();
             networkManager.sceneModule.LoadSceneAsync(_sceneName);
         }
 
         private void Start()
         {
-            StartCoroutine(SetToSpawn(delay));
+            _gameManager = InstanceHandler.GetInstance<GameManager>();
         }
         public void TeleportPlayer(PlayerID targetPlayer) 
         {
@@ -48,12 +64,12 @@ namespace Scripts
                 player.Value.Teleport(spawnPoint.position);
             }
         }
-
-        IEnumerator SetToSpawn(float time)
+        public void TeleportAllPlayers(Vector3 position) 
         {
-            yield return new WaitForSeconds(time);
-            TeleportAllPlayers();
+            //allPlayers gives you a dictionary of all the players registered
+            foreach(var player in PlayerTeleport.allPlayers) {
+                player.Value.Teleport(position);
+            }
         }
-        
     }
 }

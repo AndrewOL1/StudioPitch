@@ -1,20 +1,71 @@
+using System.Collections.Generic;
 using UnityEngine;
 using PurrNet;
+using PurrNet.Packing;
+using Scripts;
+using UnityEngine.Serialization;
+
 public class GameManager : NetworkBehaviour
 {
     # region variables
     [SerializeField]private float raceUpdateInterval = 0.5f;
     
+    [SerializeField]private SyncDictionary<PackedULong,bool> playersReady = new(true);
+    NetSceneManager _netSceneManager;
+    [SerializeField]Vector3 spawnPosition;
     #endregion
-    void Awake()
+    private void Awake()
     {
         InstanceHandler.RegisterInstance(this);
+        DontDestroyOnLoad(this);
     }
 
     private void OnDestroy() 
     {
         //Upon being destroyed, we unregister the game manager instance
         InstanceHandler.UnregisterInstance<GameManager>();
+    }
+
+    private void Start()
+    {
+        _netSceneManager=InstanceHandler.GetInstance<NetSceneManager>();
+    }
+    
+    protected override void OnSpawned()
+    {
+        //Subscribing to changes made to the dictionary
+        playersReady.onChanged += OnPlayersReadyChanged;
+    }
+
+    private void OnPlayersReadyChanged(SyncDictionaryChange<PackedULong, bool> change)
+    {
+        Debug.Log($"PlayersReady updated: {change}");
+        CheckReady();
+    }
+    [ServerRpc]
+    public void SceneLoaded(PackedULong key,bool value)
+    {
+        playersReady[key] = value;
+    }
+
+    private void CheckReady()
+    {
+        foreach (var player in playersReady)
+        {
+            if (!player.Value)
+                return;
+        }
+        _netSceneManager.TeleportAllPlayers(spawnPosition);
+        Debug.Log($"All players are ready: {playersReady.Count}");
+    }
+    
+    [ServerRpc]
+    public void InitPlayersReady()
+    {
+        foreach(var player in PlayerTeleport.allPlayers)
+        {
+            playersReady[player.Value.PlayerULong()] = false;
+        }
     }
 
     private void UpdateRaceUI()

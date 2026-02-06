@@ -1,3 +1,4 @@
+using System;
 using PurrNet;
 using PurrNet.Modules;
 using PurrNet.Packing;
@@ -9,14 +10,16 @@ public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
     
     private GameManager _gameManager;
     bool _lobbySceneLoad = false;
-    public void Teleport(Vector3 destination)
+    
+    [SerializeField] private bool launchWithoutLobby;
+    public void Teleport(Vector3 destination,PlayerID playerID)
     {
-        ServerTeleport(destination);
+        ServerTeleport(playerID,destination);
     }
-    [ServerRpc]
-    private void ServerTeleport(Vector3 destination) {
+    [TargetRpc]
+    private void ServerTeleport(PlayerID playerID,Vector3 destination) {
         playerMovement.StopMovement();
-        Debug.Log($"Teleporting to {destination}");
+        Debug.Log($"Teleporting "+(PlayerID)this.GetComponent<NetworkIdentity>().owner+" to {destination}");
         transform.position = destination;
         Debug.Log(transform.position);
     }
@@ -25,6 +28,12 @@ public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
     {
         _gameManager = InstanceHandler.GetInstance<GameManager>();
         networkManager.sceneModule.onSceneLoaded += HandleSceneLoaded();
+        //testing
+        if (launchWithoutLobby)
+        {
+            _gameManager.SceneLoaded((PlayerID)this.GetComponent<NetworkIdentity>().owner,true);
+        }
+        
     }
 
     public void NewScene()
@@ -49,5 +58,15 @@ public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
     public PlayerID PlayerID()
     {
         return (PlayerID)this.GetComponent<NetworkIdentity>().owner;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Finish"))
+        {
+            // set time and send Finished bool to game manager
+            _gameManager.PlayerFinished(PlayerID(),true);
+        }
+            
     }
 }

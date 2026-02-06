@@ -11,6 +11,8 @@ namespace Scripts
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float delay;
         GameManager _gameManager;
+        
+        [SerializeField] private bool launchWithoutLobby;
         /// <summary>
         /// Make This and instance then wait for all players to send a onLoadComplete
         /// </summary>
@@ -48,7 +50,7 @@ namespace Scripts
             if(!PlayerTeleport.TryGetPlayer(targetPlayer, out var player))
                 return;
             
-            player.Teleport(spawnPoint.position);
+            player.Teleport(spawnPoint.position,targetPlayer);
         }
 
         public void TeleportLocalPlayer() 
@@ -57,21 +59,22 @@ namespace Scripts
             if(!PlayerTeleport.TryGetLocal(out var player))
                 return;
             
-            player.Teleport(spawnPoint.position);
+            player.Teleport(spawnPoint.position,(PlayerID)localPlayer);
         }
     
         public void TeleportAllPlayers() 
         {
             //allPlayers gives you a dictionary of all the players registered
             foreach(var player in PlayerTeleport.allPlayers) {
-                player.Value.Teleport(spawnPoint.position);
+                player.Value.Teleport(spawnPoint.position,player.Key);
             }
         }
         public void TeleportAllPlayers(Vector3 position) 
         {
             //allPlayers gives you a dictionary of all the players registered
             foreach(var player in PlayerTeleport.allPlayers) {
-                player.Value.Teleport(position);
+                Debug.Log(player.Key);
+                player.Value.Teleport(position, player.Key);
             }
         }
     }

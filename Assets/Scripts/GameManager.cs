@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using LeaderBoard;
 using UnityEngine;
 using PurrNet;
 using PurrNet.Packing;
@@ -13,10 +14,15 @@ public class GameManager : NetworkBehaviour
     
     [SerializeField]private SyncDictionary<PlayerID,bool> playersReady = new(true);
     NetSceneManager _netSceneManager;
-    [SerializeField]Vector3 spawnPosition;
+    [SerializeField] Transform spawnPosition;
     [SerializeField] private SyncDictionary<PlayerID, float> playerProgressDict = new(true);
     [SerializeField] private TMP_Text positionUIText;
     [SerializeField] private int positionTest;
+    [SerializeField] private SyncDictionary<PlayerID, bool> playerFinished = new(true);
+    [SerializeField] private SyncDictionary<PlayerID, int> playerScore = new(true);
+    //[SerializeField] private SyncList<PlayerData> playerDataList = new(true);
+    //testing
+    [SerializeField] private bool launchWithoutLobby;
     #endregion
     private void Awake()
     {
@@ -40,20 +46,90 @@ public class GameManager : NetworkBehaviour
     {
         //Subscribing to changes made to the dictionary
         playersReady.onChanged += OnPlayersReadyChanged;
+        playerFinished.onChanged += OnPlayerFinishedChanged;
+        playerScore.onChanged += OnPlayerScoreChanged;
+        //playerDataList.onChanged += OnPlayerDataListChanged;
         //playerProgressDict.onChanged += OnPlayerProgressDictChanged;
     }
+    /*
+    private void OnPlayerDataListChanged(SyncListChange<PlayerData> change)
+    {
+        Debug.Log($"PlayerDataListChanged updated: {change}");
+    }
+    [ServerRpc]
+    public void PlayersScoreChanged(PlayerID key,int value)
+    {
+        var playerData = playerDataList[0];
+        playerData.score = value;
+    }
+    */
 
+    # region PlayerScore
+    private void OnPlayerScoreChanged(SyncDictionaryChange<PlayerID, int> change)
+    {
+        Debug.Log($"PlayersScore updated: {change}");
+    }
+    [ServerRpc]
+    public void PlayerScoreChanged(PlayerID key,int value)
+    {
+        playerScore[key] = value;
+    }
+
+    private void InitPlayerScore()
+    {
+        foreach (var playerID in playersReady)
+        {
+            playerScore[playerID.Key] = 0;
+        }
+    }
+    #endregion
+
+    # region PlayerFinished
+    private void OnPlayerFinishedChanged(SyncDictionaryChange<PlayerID, bool> change)
+    {
+        Debug.Log($"PlayersFinished updated: {change}");
+        
+    }
+    [ServerRpc]
+    public void PlayerFinished(PlayerID key,bool value)
+    {
+        playerFinished[key] = value;
+    }
+    [ContextMenu("CheckReady")]
+    private void CheckFinished()
+    {
+        foreach (var player in playerFinished)
+        {
+            if (!player.Value)
+                return;
+        }
+        Debug.Log($"All players are ready: {playerFinished.Count}");
+        //display leaderboard
+        
+    }
+    
+    private void InitPlayerFinished()
+    {
+        foreach (var playerID in playersReady)
+        {
+            playerFinished[playerID.Key] = false; ;
+        }
+    }
+    # endregion
+
+    # region PlayerReady
     private void OnPlayersReadyChanged(SyncDictionaryChange<PlayerID, bool> change)
     {
         Debug.Log($"PlayersReady updated: {change}");
-        CheckReady();
+        if(!launchWithoutLobby)
+            CheckReady();
     }
     [ServerRpc]
     public void SceneLoaded(PlayerID key,bool value)
     {
         playersReady[key] = value;
     }
-
+    [ContextMenu("CheckReady")]
     private void CheckReady()
     {
         foreach (var player in playersReady)
@@ -61,8 +137,8 @@ public class GameManager : NetworkBehaviour
             if (!player.Value)
                 return;
         }
-        _netSceneManager.TeleportAllPlayers(spawnPosition);
         Debug.Log($"All players are ready: {playersReady.Count}");
+        _netSceneManager.TeleportAllPlayers(spawnPosition.position);
     }
     
     [ServerRpc]
@@ -75,6 +151,7 @@ public class GameManager : NetworkBehaviour
                 playersReady[player.Value.PlayerID()] = false;
         }
     }
+    # endregion
 
     public void FixedUpdate()
     {

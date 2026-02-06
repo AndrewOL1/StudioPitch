@@ -941,6 +941,7 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   playerMovement: {fileID: 1826372689367762454}
+  launchWithoutLobby: 1
 --- !u!1 &5957132547055950005
 GameObject:
   m_ObjectHideFlags: 0

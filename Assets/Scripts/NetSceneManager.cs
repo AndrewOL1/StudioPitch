@@ -33,7 +33,7 @@ namespace Scripts
         [ContextMenu("ChangeScene")]
         public void ChangeScene()
         {
-            _gameManager.InitPlayersReady();
+            _gameManager.InitPlayerData();
             networkManager.sceneModule.LoadSceneAsync(_sceneName);
             foreach(var player in PlayerTeleport.allPlayers) {
                 player.Value.NewScene();

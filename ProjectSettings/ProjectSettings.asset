@@ -820,7 +820,7 @@ PlayerSettings:
   webWasm2023: 0
   scriptingDefineSymbols:
     Server: APP480
-    Standalone: STEAMWORKS_NET;APP480
+    Standalone: STEAMWORKS_NET;APP480;DREAMTECK_SPLINES
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

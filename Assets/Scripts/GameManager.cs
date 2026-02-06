@@ -20,7 +20,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private int positionTest;
     [SerializeField] private SyncDictionary<PlayerID, bool> playerFinished = new(true);
     [SerializeField] private SyncDictionary<PlayerID, int> playerScore = new(true);
-    //[SerializeField] private SyncList<PlayerData> playerDataList = new(true);
+    [SerializeField] private SyncDictionary<PlayerID,PlayerData> playerData = new(true);
     //testing
     [SerializeField] private bool launchWithoutLobby;
     #endregion
@@ -28,7 +28,6 @@ public class GameManager : NetworkBehaviour
     {
         InstanceHandler.RegisterInstance(this);
         DontDestroyOnLoad(this);
-        positionTest = (int)playersReady.Count / 2;
     }
 
     private void OnDestroy() 
@@ -48,39 +47,45 @@ public class GameManager : NetworkBehaviour
         playersReady.onChanged += OnPlayersReadyChanged;
         playerFinished.onChanged += OnPlayerFinishedChanged;
         playerScore.onChanged += OnPlayerScoreChanged;
-        //playerDataList.onChanged += OnPlayerDataListChanged;
+        playerData.onChanged += OnPlayerDataChanged;
         //playerProgressDict.onChanged += OnPlayerProgressDictChanged;
     }
-    /*
-    private void OnPlayerDataListChanged(SyncListChange<PlayerData> change)
+    
+    private void OnPlayerDataChanged(SyncDictionaryChange<PlayerID,PlayerData> change)
     {
         Debug.Log($"PlayerDataListChanged updated: {change}");
     }
+    
     [ServerRpc]
-    public void PlayersScoreChanged(PlayerID key,int value)
+    public void InitPlayerData()
     {
-        var playerData = playerDataList[0];
-        playerData.score = value;
+        foreach(var player in PlayerTeleport.allPlayers)
+        {
+            if (player.Value.PlayerID() != null)
+            {
+                PlayerData tempPlayerData = new PlayerData();
+                tempPlayerData.name = "";
+                tempPlayerData.score = 0;
+                tempPlayerData.progress = 0;
+                tempPlayerData.ready = false;
+                tempPlayerData.finished = false;
+                playerData[player.Value.PlayerID()] = tempPlayerData;
+            }
+        }
     }
-    */
+    [ServerRpc]
+    public void PlayerScoreChanged(PlayerID key,int value)
+    {
+        PlayerData tempPlayerData = playerData[key];
+        tempPlayerData.score = value;
+        playerData[key] = tempPlayerData;
+    }
+    
 
     # region PlayerScore
     private void OnPlayerScoreChanged(SyncDictionaryChange<PlayerID, int> change)
     {
         Debug.Log($"PlayersScore updated: {change}");
-    }
-    [ServerRpc]
-    public void PlayerScoreChanged(PlayerID key,int value)
-    {
-        playerScore[key] = value;
-    }
-
-    private void InitPlayerScore()
-    {
-        foreach (var playerID in playersReady)
-        {
-            playerScore[playerID.Key] = 0;
-        }
     }
     #endregion
 
@@ -93,7 +98,9 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     public void PlayerFinished(PlayerID key,bool value)
     {
-        playerFinished[key] = value;
+        PlayerData tempPlayerData = playerData[key];
+        tempPlayerData.finished = value;
+        playerData[key] = tempPlayerData;
     }
     [ContextMenu("CheckReady")]
     private void CheckFinished()
@@ -105,15 +112,6 @@ public class GameManager : NetworkBehaviour
         }
         Debug.Log($"All players are ready: {playerFinished.Count}");
         //display leaderboard
-        
-    }
-    
-    private void InitPlayerFinished()
-    {
-        foreach (var playerID in playersReady)
-        {
-            playerFinished[playerID.Key] = false; ;
-        }
     }
     # endregion
 
@@ -127,7 +125,9 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     public void SceneLoaded(PlayerID key,bool value)
     {
-        playersReady[key] = value;
+        PlayerData tempPlayerData = playerData[key];
+        tempPlayerData.ready = value;
+        playerData[key] = tempPlayerData;
     }
     [ContextMenu("CheckReady")]
     private void CheckReady()
@@ -165,7 +165,7 @@ public class GameManager : NetworkBehaviour
         // sort in order of progress
         // store the vars in a sync dictionary <Name,position>
 
-        positionUIText.text = positionTest + "/" + playersReady.Count;
+        positionUIText.text = positionTest + "/" + playerData.Count;
     }
 
     public void StartRace()

@@ -10,6 +10,5 @@ namespace LeaderBoard
         public float progress;
         public bool ready;
         public bool finished;
-        public PlayerID playerID;
     }
 }

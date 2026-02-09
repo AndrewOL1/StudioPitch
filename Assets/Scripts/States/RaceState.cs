@@ -29,13 +29,11 @@ namespace States
     
     [Header("Turning")]
     [SerializeField]private float turnRate = 120f; // degrees per second
-    [SerializeField]private float airTurnRate = 35f;
     [SerializeField]private float speedTurnScale = 0.015f; // higher = wider turns at speed
     [SerializeField]private float downhillBias = 15f;
     
     [Header("Gravity")]
     [SerializeField]private float gravity = -25f;
-    [SerializeField]private float airGravityScale = 0.6f;
     
     [Header("Jump")]
     [SerializeField]private float jumpForce = 10f;
@@ -43,8 +41,7 @@ namespace States
     
     [Header("Grounding")]
     [SerializeField]private float groundCheckDistance = 1.5f;
-    [SerializeField]private float groundCheckForward = 1.2f;
-    [SerializeField]private float groundCheckTolerance = 0.6f;
+    
     private float _groundStickForce = 2f,_lastGroundedTime;
     
     [Header("Landing Boost")]
@@ -238,32 +235,7 @@ namespace States
                 _isGrounded = false;
                 return;
             }
-        
-            RaycastHit forwardHit;
-
-            Vector3 probeOrigin =
-                origin +
-                _forwardDir.normalized * groundCheckForward;
-
-            bool forwardGround = Physics.Raycast(
-                probeOrigin,
-                Vector3.down,
-                out forwardHit,
-                groundCheckDistance,
-                LayerMask.GetMask("Terrain"));
-
-            if (!forwardGround)
-            {
-                _isGrounded = false;
-                return;
-            }
-            float drop = hit.point.y - forwardHit.point.y;
-
-            if (drop > groundCheckTolerance)
-            {
-                _isGrounded = false;
-                return;
-            }
+            
             _isGrounded = true;
             _lastGroundedTime = Time.time;
         
@@ -287,9 +259,7 @@ namespace States
             // Force airborne state
             _forwardDir = Vector3.ProjectOnPlane(_forwardDir, Vector3.up).normalized;
             
-            _isGrounded = false;
-            _lastGroundedTime = -999f;
-            _jumpedThisFrame = true;
+            machine.SetState(airState);
         }
 
         private void OnTriggerEnter(Collider other)

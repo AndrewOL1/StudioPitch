@@ -13,11 +13,15 @@ GameObject:
   - component: {fileID: 3204469896619937053}
   - component: {fileID: 2132029420511286678}
   - component: {fileID: 3193780882291013752}
-  - component: {fileID: 6902816482983766269}
   - component: {fileID: 7794997635337557414}
   - component: {fileID: 3845946336017362694}
-  - component: {fileID: 6378703455080507756}
   - component: {fileID: 3292158469235774954}
+  - component: {fileID: 6428233288885162502}
+  - component: {fileID: 1680078089514147964}
+  - component: {fileID: 7407815945305309442}
+  - component: {fileID: 833695172565896713}
+  - component: {fileID: 3224865713470588159}
+  - component: {fileID: 445408019387088670}
   m_Layer: 0
   m_Name: SnowPlayer (2)
   m_TagString: Player
@@ -142,41 +146,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6902816482983766269
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1310546617409599590}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 665bef22a743f6b4fb40e64500d0487d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraTransform: {fileID: 2788259594194312324}
-  minSpeed: 5
-  maxSpeed: 45
-  downhillAccel: 25
-  friction: 1
-  maxRideableSlope: 55
-  minSpeedSlopeLimit: 10
-  turnRate: 120
-  airTurnRate: 35
-  speedTurnScale: 0.015
-  downhillBias: 15
-  gravity: -25
-  airGravityScale: 0.6
-  jumpForce: 5
-  jumpGraceTime: 0.15
-  groundCheckDistance: 1.8
-  groundCheckForward: 1.2
-  groundCheckTolerance: 0.6
-  landingBoost: 6
-  inputSmoothTime: 0.1
-  board: {fileID: 6262642600750352903}
-  speed: 0
-  velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &7794997635337557414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230,7 +199,7 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   _components:
-  - target: {fileID: 6902816482983766269}
+  - target: {fileID: 6428233288885162502}
     activeAsOwner: 1
   - target: {fileID: 7843068805630278835}
     activeAsOwner: 1
@@ -245,29 +214,6 @@ MonoBehaviour:
   _toDeactivate: []
   _toEnable: []
   _toDisable: []
---- !u!114 &6378703455080507756
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1310546617409599590}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53ff64e71a0a95a43ae4c2d304ba7738, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _isSetup: 0
-  _prefabId: -2147483648
-  _componentIndex: -2147483648
-  _shouldBePooled: 0
-  _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
-  _directChildren: []
-  _networkRules: {fileID: 0}
-  _visitiblityRules: {fileID: 0}
-  playerMovement: {fileID: 6902816482983766269}
-  launchWithoutLobby: 1
 --- !u!114 &3292158469235774954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -295,7 +241,7 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6902816482983766269}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SSXPlayerController, Assembly-CSharp
         m_MethodName: ReadMove
         m_Mode: 0
@@ -327,7 +273,7 @@ MonoBehaviour:
     m_ActionName: 'Player/Crouch[/Keyboard/c]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6902816482983766269}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SSXPlayerController, Assembly-CSharp
         m_MethodName: ReadJump
         m_Mode: 0
@@ -398,6 +344,167 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &6428233288885162502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310546617409599590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b75530599bfcfa49ae4ecfe6ed3d21e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _ownerAuth: 0
+  _states:
+  - {fileID: 1680078089514147964}
+  - {fileID: 7407815945305309442}
+  - {fileID: 833695172565896713}
+  - {fileID: 3224865713470588159}
+  - {fileID: 445408019387088670}
+--- !u!114 &1680078089514147964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310546617409599590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44e2644f3e20fd147a73f296a5689695, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  cameraTransform: {fileID: 0}
+  minSpeed: 5
+  maxSpeed: 45
+  downhillAccel: 25
+  friction: 1
+  maxRideableSlope: 55
+  minSpeedSlopeLimit: 10
+  turnRate: 120
+  speedTurnScale: 0.015
+  downhillBias: 15
+  gravity: -25
+  jumpForce: 10
+  jumpGraceTime: 0.15
+  groundCheckDistance: 1.5
+  landingBoost: 6
+  inputSmoothTime: 0.1
+  board: {fileID: 6262642600750352903}
+  airState: {fileID: 7407815945305309442}
+  raceFinishedState: {fileID: 3224865713470588159}
+  crashState: {fileID: 833695172565896713}
+  speed: 0
+  velocity: {x: 0, y: 0, z: 0}
+--- !u!114 &7407815945305309442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310546617409599590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86f82d6a318b92d438bf35ecf2645c5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  crashState: {fileID: 833695172565896713}
+  raceState: {fileID: 1680078089514147964}
+  airTurnRate: 35
+  airGravityScale: 0.6
+--- !u!114 &833695172565896713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310546617409599590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e94334f0f80bd1c40bb97c9e574f1f38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  recoveryTime: 1
+  raceState: {fileID: 1680078089514147964}
+--- !u!114 &3224865713470588159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310546617409599590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29bd0b6eba044e6983a798f21a50a8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+--- !u!114 &445408019387088670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310546617409599590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f5b84f4a9ed8ec44a559da7f9900890, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
 --- !u!1 &1647657288550413802
 GameObject:
   m_ObjectHideFlags: 0

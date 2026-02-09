@@ -1,3 +1,4 @@
+using System;
 using PurrNet.StateMachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,6 +13,9 @@ namespace States
         private Vector2 _moveDirection;
         [SerializeField] private CrashState crashState;
         [SerializeField] private RaceState raceState;
+        
+        [SerializeField]private float airTurnRate = 35f;
+        [SerializeField]private float airGravityScale = 0.6f;
         public override void Enter(bool asServer)
         {
             Debug.Log("Entered AirState");
@@ -33,18 +37,30 @@ namespace States
 
         private void Trick()
         {
-            throw new System.NotImplementedException();
+            //rotate with a or d
+            //flip with w or s
         }
 
         private void AirMovement()
         {
-            throw new System.NotImplementedException();
+            //gravity
         }
 
         public override void Exit(bool asServer)
         {
             Debug.Log("Entered state");
             _moveAction.performed -= OnMovePrefromed;
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            if (other.gameObject.CompareTag("Ground"))
+            {
+                //tell if board is facing ground
+                //if yes race state
+                //else crash state
+                machine.SetState(raceState);
+            }
         }
     }
 }

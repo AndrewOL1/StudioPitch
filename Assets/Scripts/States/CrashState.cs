@@ -11,6 +11,7 @@ namespace States
         [SerializeField] private float recoveryTime;
         private bool _fell;
         [SerializeField] private RaceState raceState;
+        [SerializeField] private GroundCheck groundCheck;
         public override void Enter(bool asServer)
         {
             Debug.Log("Entered CrashedState");

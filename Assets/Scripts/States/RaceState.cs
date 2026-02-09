@@ -49,13 +49,12 @@ namespace States
     
     [Header("Smoothing")]
     [SerializeField]private float inputSmoothTime = 0.1f;
-
-    [Header("Editor")] [SerializeField] private GameObject board;
     
     [Header("States")]
     [SerializeField] private AirState airState;
     [SerializeField] private RaceFinishedState raceFinishedState;
     [SerializeField] private CrashState crashState;
+    [SerializeField] private GroundCheck groundCheck;
     
     Quaternion _airRotation;
     bool _capturedAirRotation;
@@ -69,8 +68,7 @@ namespace States
     Vector3 _forwardDir;
     Vector3 _groundNormal;
     
-    bool _isGrounded;
-    bool _wasGrounded;
+    [SerializeField]bool _isGrounded;
     
     float _smoothInput;
     float _smoothInputVel;
@@ -93,8 +91,12 @@ namespace States
             _input = GetComponent<PlayerInput>();
             _moveAction = _input.actions.FindAction("Move");
             _moveAction.performed += OnMovePrefromed;
+            _moveAction.canceled += OnMovePrefromed;
             _jumpAction = _input.actions.FindAction("Jump");
             _jumpAction.performed += OnJumpPreformed;
+            _jumpAction.canceled += OnJumpPreformed;
+            _controller = GetComponent<CharacterController>();
+            _forwardDir = transform.forward;
         }
 
         #region InputHandlers
@@ -112,7 +114,9 @@ namespace States
         public override void StateUpdate(bool asServer)
         {
             HandleInput();
-            GroundCheck();
+            groundCheck.GroundCheckUpdate();
+            if(!groundCheck.IsGrounded)
+                machine.SetState(airState,false);
             HandleJump();
             GroundMovement();
         }
@@ -124,6 +128,9 @@ namespace States
 
         private void GroundMovement()
         {
+            // get ground check varibles
+            _groundNormal = groundCheck.GroundNormal;
+            _isGrounded = groundCheck.IsGrounded;
             // Project forward onto slope
         _forwardDir = Vector3.ProjectOnPlane(_forwardDir, _groundNormal).normalized;
 
@@ -141,7 +148,7 @@ namespace States
 
         _forwardDir = Vector3.Slerp(_forwardDir, downhill, steepness * downhillBias);
         
-        board.transform.rotation = Quaternion.LookRotation(_forwardDir);
+        //board.transform.rotation = Quaternion.LookRotation(_forwardDir);
         
 //  acceleration
         float slopeFactor = Mathf.Sin(slopeAngle * Mathf.Deg2Rad);
@@ -149,19 +156,18 @@ namespace States
         float angleToDownhill = Vector3.Angle(_forwardDir, downhill);
         
         float accel;
-        if (!_jumpedThisFrame)
+        
+        if (downhillDot > 0f)
         {
-            if (downhillDot > 0f)
-            {
-                accel = downhillDot * slopeFactor * downhillAccel;
-            }
-            else
-            {
-                float uphillPenalty = (slopeAngle > minSpeedSlopeLimit) ? 3.0f : 2.5f;
-                accel = downhillDot * slopeFactor * downhillAccel * uphillPenalty;
-            }
-            speed += accel * Time.deltaTime;
+            accel = downhillDot * slopeFactor * downhillAccel;
         }
+        else
+        {
+            float uphillPenalty = (slopeAngle > minSpeedSlopeLimit) ? 3.0f : 2.5f;
+            accel = downhillDot * slopeFactor * downhillAccel * uphillPenalty;
+        }
+            speed += accel * Time.deltaTime;
+        
         speed -= friction * Time.deltaTime;
         
         if (_isGrounded &&
@@ -210,62 +216,24 @@ namespace States
 // Align model to slope
         Quaternion slopeRot = Quaternion.FromToRotation(transform.up, _groundNormal) * transform.rotation;
         transform.rotation = Quaternion.Slerp(transform.rotation, slopeRot, 12f * Time.deltaTime);
-        }
-
-        private void GroundCheck()
-        {
-            RaycastHit hit;
-        
-            Vector3 origin = transform.position + Vector3.up * 0.5f;
-        
-            bool hitGround = Physics.Raycast(origin, Vector3.down, out hit, groundCheckDistance,LayerMask.GetMask("Terrain"));
-            if (!hitGround)
-            {
-                _isGrounded = false;
-                return;
-            }
-        
-
-            _hitInfo = hit;
-            _groundNormal = hit.normal;
-        
-            float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
-            if (slopeAngle > maxRideableSlope)
-            {
-                _isGrounded = false;
-                return;
-            }
-            
-            _isGrounded = true;
-            _lastGroundedTime = Time.time;
-        
-// Landing detection
-            if (!_wasGrounded && _verticalVelocity < 0f && 
-                Time.time - _lastLandingTime > _landingCooldown)
-            {
-                _lastLandingTime = Time.time;
-                float align = Vector3.Dot(hit.normal, Vector3.up);
-                speed += landingBoost * align;
-                _verticalVelocity = 0f;
-            }
+        transform.rotation = Quaternion.LookRotation(_forwardDir);
         }
 
         private void HandleJump()
         {
-            if (!_inputJump || !(Time.time - _lastGroundedTime <= jumpGraceTime)) return;
+            if (!_inputJump) return;
             //_controller.Move(Vector3.up * 0.05f);
-            _verticalVelocity = jumpForce + Mathf.Clamp(speed * 0.05f, 0f, 4f);
-
+            
             // Force airborne state
             _forwardDir = Vector3.ProjectOnPlane(_forwardDir, Vector3.up).normalized;
-            
-            machine.SetState(airState);
+            _inputJump=false;
+            machine.SetState(airState,true);
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Jump"))
-                machine.SetState(airState);
+                machine.SetState(airState,false);
         }
 
         public override void Exit(bool asServer)
@@ -273,6 +241,22 @@ namespace States
             Debug.Log("Exited RaceState");
             _moveAction.performed -= OnMovePrefromed;
             _jumpAction.performed -= OnJumpPreformed;
+            _jumpAction.canceled -= OnJumpPreformed;
+            _moveAction.canceled -= OnMovePrefromed;
+        }
+        void OnDrawGizmos()
+        {
+            if (!Application.isPlaying) return;
+
+            Vector3 origin = transform.position + Vector3.up * 0.5f;
+
+            // ===== DOWNWARD GROUND CHECK =====
+            Gizmos.color =  Color.yellow;
+
+            Gizmos.DrawLine(
+                origin,
+                origin + _forwardDir * _forwardDir.magnitude
+            );
         }
     }
 }

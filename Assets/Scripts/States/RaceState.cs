@@ -63,6 +63,7 @@ namespace States
     Quaternion _airRotation;
     bool _capturedAirRotation;
     
+    
     [SerializeField]private RaycastHit _hitInfo;
     
     public float speed;
@@ -179,7 +180,7 @@ namespace States
         if (_isGrounded && speed < 0.1f && slopeAngle > minSpeedSlopeLimit && angleToDownhill > 90f && downhillDot <= 0f)
         {
             _forwardDir = Vector3.ProjectOnPlane(-_forwardDir, _groundNormal).normalized;
-            speed = 4f;
+            speed = 0.5f;
             
             isCameraBehind = !isCameraBehind;
             
@@ -210,7 +211,7 @@ namespace States
 
         Vector3 stick = Vector3.zero;
 
-        if (!stopped && !goingUphill && _verticalVelocity <= 0f)
+        if (!stopped && _verticalVelocity <= 0f)
         {
             stick = -_groundNormal * _groundStickForce;
         }

@@ -28,7 +28,6 @@ public class StopedState : StateNode
 
     public void StartRace()
     {
-        raceState.Reset();
         machine.SetState(raceState);
     }
 }

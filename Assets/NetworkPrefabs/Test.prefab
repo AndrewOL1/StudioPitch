@@ -418,6 +418,7 @@ MonoBehaviour:
   airState: {fileID: 7407815945305309442}
   raceFinishedState: {fileID: 3224865713470588159}
   crashState: {fileID: 833695172565896713}
+  raceFinished: {fileID: 3224865713470588159}
   groundCheck: {fileID: 6176118414356051385}
   speed: 0
   velocity: {x: 0, y: 0, z: 0}

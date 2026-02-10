@@ -53,8 +53,10 @@ namespace LeaderBoard
         
         private void ClearLeaderboard()
         {
-            while (leaderboardWidgetContainer.childCount > 0)
-                Destroy(leaderboardWidgetContainer.GetChild(0).gameObject);
+            for (int i = leaderboardWidgetContainer.childCount - 1; i >= 0; i--)
+            {
+                Destroy(leaderboardWidgetContainer.GetChild(i).gameObject);
+            }
         }
 
         public void UpdateRaceProgress(float progress)

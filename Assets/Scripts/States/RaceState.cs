@@ -57,6 +57,7 @@ namespace States
     [SerializeField] private AirState airState;
     [SerializeField] private RaceFinishedState raceFinishedState;
     [SerializeField] private CrashState crashState;
+    [SerializeField] private StateNode raceFinished;
     [SerializeField] private GroundCheck groundCheck;
     
     Quaternion _airRotation;
@@ -100,6 +101,8 @@ namespace States
             _jumpAction.canceled += OnJumpPreformed;
             _controller = GetComponent<CharacterController>();
             _forwardDir = transform.forward;
+            if(machine.previousStateNode == raceFinished)
+                Reset();
         }
 
         #region InputHandlers
@@ -246,6 +249,8 @@ namespace States
         {
             transform.rotation = Quaternion.identity;
             velocity = Vector3.zero;
+            speed = 0f;
+            _controller.Move(Vector3.zero);
         }
 
         public override void Exit(bool asServer)

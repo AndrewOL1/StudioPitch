@@ -27,7 +27,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private List<PlayerData> playersInOrder = new();
     [SerializeField] private float leaderboardDisplayTime;
 
-    private bool _resettingReady = false,_resettingFinished=false,_raceStopped =false;
+    private bool _resettingReady = false,_resettingFinished=false,_raceStarted =false,_raceStopped =false;
     private int _raceIndex=1;
     public GameState gameState;
     #endregion
@@ -143,6 +143,7 @@ public class GameManager : NetworkBehaviour
     [ContextMenu("CheckReady")]
     private void CheckReady()
     {
+        if (playerData.Values.Count == 0) return;
         foreach (var player in playerData.Values)
         {
             if (!player.ready)
@@ -151,7 +152,6 @@ public class GameManager : NetworkBehaviour
         Debug.Log($"All players are ready: {playerData.Count}");
         StartCoroutine(SceneDelay());
         gameState = GameState.Starting;
-        StartRace();
         ResetReady();
     }
 
@@ -187,23 +187,24 @@ public class GameManager : NetworkBehaviour
             case GameState.Lobby: CheckReady();
                 break;
             case GameState.Starting: 
+                if(!_raceStarted)
+                    StartRace();
                 break;
             case GameState.Gameplay: 
                 if (!_updateRace) return;
                 UpdateRaceUI();
                 CheckFinished();
                 break;
-            case GameState.Leaderboard: 
+            case GameState.Leaderboard:
+                if (!_raceStopped)
+                {
+                    StopRace();
+                }
                 break;
             case GameState.PowerUp: 
                 break;
             default: Debug.Log("GameState FUCKUP"); break;
         }
-        
-        if (!_updateRace) return;
-        UpdateRaceUI();
-        if (!_raceStopped) return;
-        StopRace();
     }
 
     private void UpdateRaceUI()
@@ -231,8 +232,11 @@ public class GameManager : NetworkBehaviour
     {
         //needs to be called once all players have loaded the scene
         //start Race
+        if (_raceStarted) return;
         Debug.Log("StartRace in...");
         StartCoroutine(StartCountdown());
+        _raceStarted = true;
+        _raceStopped = false;
     }
 
     public void StopRace()
@@ -240,16 +244,19 @@ public class GameManager : NetworkBehaviour
         //stop race
         //delay
         //show updated leaderboard
-        Debug.Log("STOPRACE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        if(_raceStopped)return;
+        gameState = GameState.Leaderboard;
         _raceStopped = true;
+        Debug.Log("STOPRACE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        _raceStarted = false;
         _updateRace = false;
+        CalculateScore();
         foreach (var player in playerData)
         {
             _raceUIManager.AddLeaderboardEntry(player.Value.score, player.Value.name);
         }
         _raceUIManager.ForceShowLeaderboard(_raceIndex);
         StartCoroutine(LeaderboardDisplay());
-        
     }
 
     public void StartNewRace()
@@ -282,6 +289,39 @@ public class GameManager : NetworkBehaviour
         }
 
         StartCoroutine(ProgressDelay());
+    }
+
+    private void CalculateScore()
+    {
+        var sorted = playerData.OrderByDescending(kvp => kvp.Value.progress).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        int count = 0;
+        foreach (var player in sorted)
+        {
+            PlayerData tempPlayerData = playerData[player.Key];
+            switch (count)
+            {
+                case 0:
+                    tempPlayerData.score += 9;
+                    break;
+                case 1: tempPlayerData.score += 7;
+                    break;
+                case 2: tempPlayerData.score += 6;
+                    break;
+                case 3: tempPlayerData.score += 5;
+                    break;
+                case 4: tempPlayerData.score += 4;
+                    break;
+                case 5: tempPlayerData.score += 3;
+                    break;
+                case 6: tempPlayerData.score += 2;
+                    break;
+                case 7: tempPlayerData.score += 1;
+                    break;
+                default: Debug.Log("Score FUCKUP"); break;
+            }
+            playerData[player.Key] = tempPlayerData;
+            count++;
+        }
     }
 
     [TargetRpc]
@@ -317,6 +357,8 @@ public class GameManager : NetworkBehaviour
             player.Value.StartRace();
         }
         _updateRace=true;
+        _raceStopped = false;
+        gameState = GameState.Gameplay;
     }
     IEnumerator LeaderboardDisplay()
     {

@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using LeaderBoard;
 using UnityEngine;
 using PurrNet;
@@ -11,18 +13,21 @@ public class GameManager : NetworkBehaviour
 {
     # region variables
     [SerializeField]private float raceUpdateInterval = 0.5f;
+    bool _updateRace = false;
     
-    [SerializeField]private SyncDictionary<PlayerID,bool> playersReady = new(true);
     NetSceneManager _netSceneManager;
-    [SerializeField] Transform spawnPosition;
-    [SerializeField] private SyncDictionary<PlayerID, float> playerProgressDict = new(true);
+    public Transform spawnPosition;
     [SerializeField] private TMP_Text positionUIText;
     [SerializeField] private int positionTest;
-    [SerializeField] private SyncDictionary<PlayerID, bool> playerFinished = new(true);
-    [SerializeField] private SyncDictionary<PlayerID, int> playerScore = new(true);
     [SerializeField] private SyncDictionary<PlayerID,PlayerData> playerData = new(true);
+    private RaceUIManager _raceUIManager;
     //testing
     [SerializeField] private bool launchWithoutLobby;
+    [SerializeField] private List<PlayerData> playersInOrder = new();
+    [SerializeField] private float leaderboardDisplayTime;
+
+    private bool _resettingReady = false,_resettingFinished=false;
+    private int _raceIndex=1;
     #endregion
     private void Awake()
     {
@@ -44,16 +49,20 @@ public class GameManager : NetworkBehaviour
     protected override void OnSpawned()
     {
         //Subscribing to changes made to the dictionary
-        playersReady.onChanged += OnPlayersReadyChanged;
-        playerFinished.onChanged += OnPlayerFinishedChanged;
-        playerScore.onChanged += OnPlayerScoreChanged;
         playerData.onChanged += OnPlayerDataChanged;
         //playerProgressDict.onChanged += OnPlayerProgressDictChanged;
     }
     
     private void OnPlayerDataChanged(SyncDictionaryChange<PlayerID,PlayerData> change)
     {
-        Debug.Log($"PlayerDataListChanged updated: {change}");
+       // Debug.Log($"PlayerDataListChanged updated: {change}"); ANNOYING
+       if (!launchWithoutLobby)
+       {
+           if(!_resettingReady)
+               CheckReady();
+           if(!_resettingFinished)
+               CheckFinished();
+       }
     }
     
     [ServerRpc]
@@ -73,6 +82,10 @@ public class GameManager : NetworkBehaviour
             }
         }
     }
+    
+    
+
+    # region PlayerScore
     [ServerRpc]
     public void PlayerScoreChanged(PlayerID key,int value)
     {
@@ -80,21 +93,10 @@ public class GameManager : NetworkBehaviour
         tempPlayerData.score = value;
         playerData[key] = tempPlayerData;
     }
-    
-
-    # region PlayerScore
-    private void OnPlayerScoreChanged(SyncDictionaryChange<PlayerID, int> change)
-    {
-        Debug.Log($"PlayersScore updated: {change}");
-    }
     #endregion
 
     # region PlayerFinished
-    private void OnPlayerFinishedChanged(SyncDictionaryChange<PlayerID, bool> change)
-    {
-        Debug.Log($"PlayersFinished updated: {change}");
-        
-    }
+    
     [ServerRpc]
     public void PlayerFinished(PlayerID key,bool value)
     {
@@ -102,26 +104,21 @@ public class GameManager : NetworkBehaviour
         tempPlayerData.finished = value;
         playerData[key] = tempPlayerData;
     }
-    [ContextMenu("CheckReady")]
+    [ContextMenu("CheckFinished")]
     private void CheckFinished()
     {
-        foreach (var player in playerFinished)
+        foreach (var player in playerData.Values)
         {
-            if (!player.Value)
+            if (!player.finished)
                 return;
         }
-        Debug.Log($"All players are ready: {playerFinished.Count}");
         //display leaderboard
+        StopRace();
+        ResetFinished();
     }
     # endregion
 
     # region PlayerReady
-    private void OnPlayersReadyChanged(SyncDictionaryChange<PlayerID, bool> change)
-    {
-        Debug.Log($"PlayersReady updated: {change}");
-        if(!launchWithoutLobby)
-            CheckReady();
-    }
     [ServerRpc]
     public void SceneLoaded(PlayerID key,bool value)
     {
@@ -132,57 +129,98 @@ public class GameManager : NetworkBehaviour
     [ContextMenu("CheckReady")]
     private void CheckReady()
     {
-        foreach (var player in playersReady)
+        foreach (var player in playerData.Values)
         {
-            if (!player.Value)
+            if (!player.ready)
                 return;
         }
-        Debug.Log($"All players are ready: {playersReady.Count}");
-        _netSceneManager.TeleportAllPlayers(spawnPosition.position);
+        Debug.Log($"All players are ready: {playerData.Count}");
+        StartCoroutine(SceneDelay());
+        StartRace();
+        ResetReady();
+    }
+
+    private void ResetReady()
+    {
+        _resettingReady = true;
+        foreach (var player in PlayerTeleport.allPlayers)
+        {
+            PlayerData tempPlayerData = playerData[player.Key];
+            tempPlayerData.ready = false;
+            playerData[player.Key] = tempPlayerData;
+        }
+        _resettingFinished = false;
+    }
+    private void ResetFinished()
+    {
+        _resettingFinished = true;
+        foreach (var player in PlayerTeleport.allPlayers)
+        {
+            PlayerData tempPlayerData = playerData[player.Key];
+            tempPlayerData.finished = false;
+            playerData[player.Key] = tempPlayerData;
+        }
+        _resettingFinished = false;
     }
     
-    [ServerRpc]
-    public void InitPlayersReady()
-    {
-        foreach(var player in PlayerTeleport.allPlayers)
-        {
-            Debug.Log(player.Value.PlayerID());
-            if (player.Value.PlayerID()!=null)
-                playersReady[player.Value.PlayerID()] = false;
-        }
-    }
     # endregion
 
     public void FixedUpdate()
     {
-        UpdateRaceUI();
+        if (_updateRace)
+            UpdateRaceUI();
     }
 
     private void UpdateRaceUI()
     {
         // call once every interval
         // get players and for each call the update progress
-        // sort in order of progress
-        // store the vars in a sync dictionary <Name,position>
+        if (!_raceUIManager)
+        {
+            _raceUIManager = InstanceHandler.GetInstance<RaceUIManager>();
+            return;
+        }
 
-        positionUIText.text = positionTest + "/" + playerData.Count;
+        PlayerProgress();
+        var sorted = playerData.OrderByDescending(kvp => kvp.Value.progress).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        int count = 0;
+        foreach (var player in sorted)
+        {
+            UpdatePositionUI(player.Key,count);
+            count++;
+        }
+        // sort in order of progress
     }
 
     public void StartRace()
     {
         //needs to be called once all players have loaded the scene
         //start Race
+        Debug.Log("StartRace in...");
+        StartCoroutine(StartCountdown());
     }
 
     public void StopRace()
     {
         //stop race
-        //show race results
         //delay
         //show updated leaderboard
-        //delay
-        //start power-up selection
+        _updateRace = false;
+        foreach (var player in playerData)
+        {
+            _raceUIManager.AddLeaderboardEntry(player.Value.score, player.Value.name);
+        }
+        _raceUIManager.ForceShowLeaderboard(_raceIndex);
+        StartCoroutine(LeaderboardDisplay());
         
+    }
+
+    public void StartNewRace()
+    {
+        _raceIndex++;
+        
+        _netSceneManager.TeleportAllPlayers();
+        StartCoroutine(StartCountdown());
     }
 
     private void StartPowerUpSelection()
@@ -194,38 +232,59 @@ public class GameManager : NetworkBehaviour
         //clear race data
         //start next race
     }
-
-    private void OnDictionaryChanged(SyncDictionaryChange<int, float> change)
+    
+    private void PlayerProgress()
     {
-        //This is called for everyone when the dictionary changes.
-        //It will log out the Key, Value and operation
-        Debug.Log($"Dictionary updated: {change}");
-    }
-
-    private void ChangeMyDictionary()
-    {
-        /*//This will change or add a value to the dictionary
-        playerProgressDict[123] = 0.69f;
-
-        //This will remove the value from the dictionary
-        playerProgressDict.Remove(123);
-
-        //This will mark the key as dirty
-        playerProgressDict.SetDirty(123);*/
-    }
-
-    [ServerRpc]
-    private void OnPlayerProgressDictChanged(SyncDictionaryChange<PlayerID, float> change)
-    {
-        
+        _updateRace=false;
         foreach (var player in PlayerTeleport.allPlayers)
         {
-            float currentPlayerProg = player.Value.GetComponent<SsxPlayerController>().UpdateProgress();
-            playerProgressDict[player.Value.PlayerID()] = currentPlayerProg;
-
-
+            float currentPlayerProg = player.Value.UpdateProgress();
+            PlayerData tempPlayerData = playerData[player.Key];
+            tempPlayerData.progress = currentPlayerProg;
+            playerData[player.Key] = tempPlayerData;
         }
 
-        
+        StartCoroutine(ProgressDelay());
+    }
+
+    [TargetRpc]
+    private void UpdatePositionUI(PlayerID key,int count)
+    {
+        _raceUIManager.UpdateRacePosition(count,playerData.Count);
+        _raceUIManager.UpdateRaceProgress(playerData[key].progress);
+    }
+
+    IEnumerator ProgressDelay()
+    {
+        yield return new WaitForSeconds(raceUpdateInterval);
+        _updateRace = true;
+    }
+
+    IEnumerator SceneDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        InstanceHandler.GetInstance<NetSceneManager>().TeleportAllPlayers();
+    }
+    IEnumerator StartCountdown()
+    {
+        yield return new WaitForSeconds(1f);
+        Debug.Log("...3...");
+        yield return new WaitForSeconds(1f);
+        Debug.Log("...2...");
+        yield return new WaitForSeconds(1f);
+        Debug.Log("...1...");
+        yield return new WaitForSeconds(1f);
+        Debug.Log("...GO...");
+        foreach (var player in PlayerTeleport.allPlayers)
+        {
+            player.Value.StartRace();
+        }
+        _updateRace=true;
+    }
+    IEnumerator LeaderboardDisplay()
+    {
+        yield return new WaitForSeconds(leaderboardDisplayTime);
+        //would go to power up
+        StartNewRace();
     }
 }

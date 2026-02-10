@@ -2,12 +2,17 @@ using System;
 using PurrNet;
 using PurrNet.Modules;
 using PurrNet.Packing;
+using PurrNet.StateMachine;
+using States;
 using UnityEngine;
 
 public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
 {
-    [SerializeField] SsxPlayerController playerMovement;
-    
+    //[SerializeField] SsxPlayerController playerMovement;
+    [SerializeField] private StateMachine stateMachine;
+    [SerializeField] private StopedState stopedState;
+    [SerializeField] private RaceFinishedState raceFinishedState;
+    private SplineRaceTracker _raceTracker;
     private GameManager _gameManager;
     bool _lobbySceneLoad = false;
     
@@ -18,10 +23,8 @@ public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
     }
     [TargetRpc]
     private void ServerTeleport(PlayerID playerID,Vector3 destination) {
-        playerMovement.StopMovement();
-        Debug.Log($"Teleporting "+(PlayerID)this.GetComponent<NetworkIdentity>().owner+" to {destination}");
+        //playerMovement.StopMovement();
         transform.position = destination;
-        Debug.Log(transform.position);
     }
 
     private void Start()
@@ -39,6 +42,11 @@ public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
     public void NewScene()
     {
         networkManager.sceneModule.onSceneLoaded += HandleSceneLoaded();
+    }
+
+    public void SetStopState()
+    {
+        stateMachine.SetState(stopedState);
     }
 
     private OnSceneActionEvent HandleSceneLoaded()
@@ -66,7 +74,22 @@ public class PlayerTeleport : PlayerIdentity<PlayerTeleport>
         {
             // set time and send Finished bool to game manager
             _gameManager.PlayerFinished(PlayerID(),true);
+            stateMachine.SetState(raceFinishedState);
         }
             
+    }
+
+    public float UpdateProgress()
+    {
+        if (!_raceTracker)
+            _raceTracker = FindFirstObjectByType<SplineRaceTracker>();
+        float progress,dist;
+        (progress,dist)=_raceTracker.GetPlayerProgress(transform.position);
+        return progress;
+    }
+
+    public void StartRace()
+    {
+        stopedState.StartRace();
     }
 }

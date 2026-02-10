@@ -21,7 +21,7 @@ namespace Scripts
         {
             //We register the GameManager instance
             InstanceHandler.RegisterInstance(this);
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         
         private void OnDestroy() 
@@ -34,10 +34,11 @@ namespace Scripts
         public void ChangeScene()
         {
             _gameManager.InitPlayerData();
-            networkManager.sceneModule.LoadSceneAsync(_sceneName);
             foreach(var player in PlayerTeleport.allPlayers) {
-                player.Value.NewScene();
+                player.Value.SetStopState();
             }
+
+            StartCoroutine(CDelay());
         }
 
         private void Start()
@@ -75,6 +76,15 @@ namespace Scripts
             foreach(var player in PlayerTeleport.allPlayers) {
                 Debug.Log(player.Key);
                 player.Value.Teleport(position, player.Key);
+            }
+        }
+
+        IEnumerator CDelay()
+        {
+            yield return new WaitForSeconds(1f);
+            networkManager.sceneModule.LoadSceneAsync(_sceneName);
+            foreach(var player in PlayerTeleport.allPlayers) {
+                player.Value.NewScene();
             }
         }
     }

@@ -21,8 +21,9 @@ namespace States
         [SerializeField] private GroundCheck groundCheck;
         private float _verticalVelocity;
         private float _smoothInput;
-        private Vector3 _startingForwardDirection;
+        private Vector3 _startingRotation;
         [SerializeField] private float groundCheckDistance;
+        [SerializeField] private float angleThreshold;
         
         Vector3 _forwardDir, _velocity;
         public override void Enter(bool jumped, bool asServer)
@@ -37,7 +38,7 @@ namespace States
             _forwardDir = transform.forward;
             if(jumped)
                 _verticalVelocity = _velocity.y + jumpForce;
-            _startingForwardDirection = _forwardDir;
+            _startingRotation = transform.eulerAngles;
             AirMovement();
         }
 
@@ -88,47 +89,37 @@ namespace States
         private void LandingCheck()
         {
             RaycastHit hit;
-            
             Vector3 origin = transform.position + Vector3.up * 0.5f;
-            Vector3 frontDirection = origin + _startingForwardDirection * 0.5f;
-            Vector3 backDirection = origin - _startingForwardDirection;
-            bool hitFrontGround = Physics.Raycast(frontDirection,_startingForwardDirection, out hit, groundCheckDistance,LayerMask.GetMask("Terrain"));
-            bool hitBackGround = Physics.Raycast(backDirection,-_startingForwardDirection, out hit, groundCheckDistance,LayerMask.GetMask("Terrain"));
-            if (hitFrontGround || hitBackGround)
+            bool hitGround = Physics.Raycast(origin,Vector3.down, out hit, groundCheckDistance,LayerMask.GetMask("Terrain"));
+            if (hitGround)
             {
-                
-                //get boost
-                machine.SetState(raceState);
-            }
-            else
-            {
-                machine.SetState(crashState);
+                Vector3 normal = hit.normal;
+    
+                // Calculate angle from vertical (flat ground = 0°, vertical wall = 90°)
+                float slopeAngle = Vector3.Angle(normal, Vector3.up);
+    
+                // slopeAngle tells you how steep the ground is
+                // e.g., 45° max slope for landing
+                    // Now check player orientation relative to slope
+                    Vector3 playerUp = transform.up;
+                    float playerAlignment = Vector3.Angle(normal, playerUp);
+        
+                    if (playerAlignment <= angleThreshold)
+                    {
+                        // Good landing on acceptable slope
+                        machine.SetState(raceState);
+                    }
+                    else
+                    {
+                        // Player not aligned with slope
+                        machine.SetState(crashState);
+                    }
             }
         }
 
         private void OnCollisionEnter(Collision other)
         {
             LandingCheck();
-        }
-
-        void OnDrawGizmos()
-        {
-            if (!Application.isPlaying) return;
-
-            Vector3 origin = transform.position + Vector3.up * 0.5f;
-
-            Gizmos.color = Color.green;
-            
-            Gizmos.DrawLine(
-                origin,
-                origin + _startingForwardDirection + Vector3.Cross(_startingForwardDirection , transform.position).normalized * groundCheckDistance
-            );
-            
-            Gizmos.DrawLine(
-                origin,
-                origin - _startingForwardDirection + -_startingForwardDirection * groundCheckDistance
-            );
-
         }
     }
 }

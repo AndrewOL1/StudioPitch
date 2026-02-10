@@ -15,8 +15,11 @@ namespace States
         private bool _inputJump;
         
         
-        [Header("References")]
-    public Transform cameraTransform;
+        [Header("Camera Control")]
+        [SerializeField] private CameraController cameraController;
+        [SerializeField] private bool isCameraBehind = true; // true = camera behind player
+
+        public event Action<bool> OnDirectionFlipped;
     
     
     [Header("Movement Settings")]
@@ -80,7 +83,7 @@ namespace States
     float _lastLandingTime;
     float _landingCooldown = 0.1f;
 
-    private bool _isPaused;
+    
     
     //testing
     private SplineRaceTracker _splineRaceTracker;
@@ -170,16 +173,19 @@ namespace States
         
         speed -= friction * Time.deltaTime;
         
-        if (_isGrounded &&
-            speed < 0.1f &&
-            slopeAngle > minSpeedSlopeLimit &&
-            angleToDownhill > 90f &&
-            downhillDot <= 0f)
+        if (_isGrounded && speed < 0.1f && slopeAngle > minSpeedSlopeLimit && angleToDownhill > 90f && downhillDot <= 0f)
         {
-            
             _forwardDir = Vector3.ProjectOnPlane(-_forwardDir, _groundNormal).normalized;
-            
             speed = 4f;
+            
+            isCameraBehind = !isCameraBehind;
+            
+            OnDirectionFlipped?.Invoke(isCameraBehind);
+
+            if (cameraController)
+            {
+                cameraController.SwitchPerspective(isCameraBehind);
+            }
         }
         if (slopeAngle <= minSpeedSlopeLimit)
         {

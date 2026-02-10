@@ -422,7 +422,6 @@ MonoBehaviour:
   speed: 0
   velocity: {x: 0, y: 0, z: 0}
   _isGrounded: 0
-  IsPaused: 0
 --- !u!114 &7407815945305309442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -585,7 +584,7 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   stateMachine: {fileID: 6428233288885162502}
   stopedState: {fileID: 522644948432236854}
-  raceState: {fileID: 1680078089514147964}
+  raceFinishedState: {fileID: 3224865713470588159}
   launchWithoutLobby: 0
 --- !u!1 &1647657288550413802
 GameObject:

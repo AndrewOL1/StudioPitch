@@ -10,7 +10,7 @@ public class StopedState : StateNode
     
     public override void Enter(bool asServer)
     {
-        Debug.Log("Entered StopedState");
+        Debug.Log("Entered StoppedState");
         _controller = GetComponent<CharacterController>();
         _controller.Move(Vector3.zero);
     }
@@ -23,11 +23,12 @@ public class StopedState : StateNode
 
     public override void Exit(bool asServer)
     {
-        Debug.Log("Exited StopedState");
+        Debug.Log("Exited StoppedState");
     }
 
     public void StartRace()
     {
+        raceState.Reset();
         machine.SetState(raceState);
     }
 }

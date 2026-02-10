@@ -10,9 +10,8 @@ namespace States
         private InputAction jumpAction;
         public override void Enter(bool asServer)
         {
-            Debug.Log("Entered state1");
-            _input = GetComponent<PlayerInput>();
-            _input.actions.FindAction("Idle");
+            Debug.Log("Entered RaceFinishedState");
+            
         }
 
         public override void StateUpdate(bool asServer)
@@ -22,7 +21,7 @@ namespace States
 
         public override void Exit(bool asServer)
         {
-            Debug.Log("Entered state");
+            Debug.Log("Exited RaceFinishedState");
         }
     }
 }

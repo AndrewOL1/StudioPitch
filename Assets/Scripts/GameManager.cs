@@ -6,6 +6,7 @@ using UnityEngine;
 using PurrNet;
 using PurrNet.Packing;
 using Scripts;
+using SteamTools;
 using UnityEngine.Serialization;
 using TMPro;
 
@@ -26,13 +27,24 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private List<PlayerData> playersInOrder = new();
     [SerializeField] private float leaderboardDisplayTime;
 
-    private bool _resettingReady = false,_resettingFinished=false;
+    private bool _resettingReady = false,_resettingFinished=false,_raceStopped =false;
     private int _raceIndex=1;
+    public GameState gameState;
     #endregion
+
+    public enum GameState
+    {
+        Lobby,
+        Starting,
+        Gameplay,
+        Leaderboard,
+        PowerUp
+    }
     private void Awake()
     {
         InstanceHandler.RegisterInstance(this);
         DontDestroyOnLoad(this);
+        gameState = GameState.Lobby;
     }
 
     private void OnDestroy() 
@@ -56,6 +68,7 @@ public class GameManager : NetworkBehaviour
     private void OnPlayerDataChanged(SyncDictionaryChange<PlayerID,PlayerData> change)
     {
        // Debug.Log($"PlayerDataListChanged updated: {change}"); ANNOYING
+       /*
        if (!launchWithoutLobby)
        {
            if(!_resettingReady)
@@ -63,6 +76,7 @@ public class GameManager : NetworkBehaviour
            if(!_resettingFinished)
                CheckFinished();
        }
+       */
     }
     
     [ServerRpc]
@@ -113,7 +127,7 @@ public class GameManager : NetworkBehaviour
                 return;
         }
         //display leaderboard
-        StopRace();
+        gameState = GameState.Leaderboard;
         ResetFinished();
     }
     # endregion
@@ -136,6 +150,7 @@ public class GameManager : NetworkBehaviour
         }
         Debug.Log($"All players are ready: {playerData.Count}");
         StartCoroutine(SceneDelay());
+        gameState = GameState.Starting;
         StartRace();
         ResetReady();
     }
@@ -167,8 +182,28 @@ public class GameManager : NetworkBehaviour
 
     public void FixedUpdate()
     {
-        if (_updateRace)
-            UpdateRaceUI();
+        switch (gameState)
+        {
+            case GameState.Lobby: CheckReady();
+                break;
+            case GameState.Starting: 
+                break;
+            case GameState.Gameplay: 
+                if (!_updateRace) return;
+                UpdateRaceUI();
+                CheckFinished();
+                break;
+            case GameState.Leaderboard: 
+                break;
+            case GameState.PowerUp: 
+                break;
+            default: Debug.Log("GameState FUCKUP"); break;
+        }
+        
+        if (!_updateRace) return;
+        UpdateRaceUI();
+        if (!_raceStopped) return;
+        StopRace();
     }
 
     private void UpdateRaceUI()
@@ -205,6 +240,8 @@ public class GameManager : NetworkBehaviour
         //stop race
         //delay
         //show updated leaderboard
+        Debug.Log("STOPRACE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        _raceStopped = true;
         _updateRace = false;
         foreach (var player in playerData)
         {
@@ -218,7 +255,7 @@ public class GameManager : NetworkBehaviour
     public void StartNewRace()
     {
         _raceIndex++;
-        
+        _netSceneManager = InstanceHandler.GetInstance<NetSceneManager>();
         _netSceneManager.TeleportAllPlayers();
         StartCoroutine(StartCountdown());
     }
@@ -285,6 +322,7 @@ public class GameManager : NetworkBehaviour
     {
         yield return new WaitForSeconds(leaderboardDisplayTime);
         //would go to power up
+        _raceUIManager.ForceCloseLeaderboard();
         StartNewRace();
     }
 }

@@ -1089,7 +1089,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2056242636}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.375
+  m_Size: 0.37500003
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3767,6 +3767,7 @@ MonoBehaviour:
     _sendIntervalInSeconds: 0
     _useForceSend: 0
   launchWithoutLobby: 0
+  leaderboardDisplayTime: 5
 --- !u!4 &1079203674
 Transform:
   m_ObjectHideFlags: 0

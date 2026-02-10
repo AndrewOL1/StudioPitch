@@ -28,14 +28,13 @@ namespace LeaderBoard
             //Upon being destroyed, we unregister the game manager instance
             InstanceHandler.UnregisterInstance<RaceUIManager>();
         }
-        [ServerRpc]
+        
         public void ForceShowLeaderboard(int raceIndex)
         {
             //activate leaderboard
             leaderboard.SetActive(true);
             leaderboardRaceText.text = "Race: " + raceIndex;
         }
-        [ServerRpc]
         public void ForceCloseLeaderboard()
         {
             //disable leaderboard
@@ -43,7 +42,6 @@ namespace LeaderBoard
             ClearLeaderboard();
         }
         // ReSharper disable Unity.PerformanceAnalysis
-        [ServerRpc]
         public void AddLeaderboardEntry(int score, string name)
         {
             _leaderboardWidget = Instantiate(leaderboardWidget, leaderboardWidgetContainer);
@@ -52,7 +50,7 @@ namespace LeaderBoard
             leaderboardEntryWidget.name = name;
         }
 
-        [ServerRpc]
+        
         private void ClearLeaderboard()
         {
             while (leaderboardWidgetContainer.childCount > 0)

@@ -242,6 +242,12 @@ namespace States
                 machine.SetState(airState,false);
         }
 
+        public void Reset()
+        {
+            transform.rotation = Quaternion.identity;
+            velocity = Vector3.zero;
+        }
+
         public override void Exit(bool asServer)
         {
             Debug.Log("Exited RaceState");
